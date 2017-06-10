@@ -1,0 +1,34 @@
+# http://www.fmc-modeling.org/download/notation_reference/Reference_Sheet-Block_Diagram.pdf
+
+[ Actor ]
+
+( Storage )
+
+
+# read access
+[ Actor ]<---[ Storage )
+
+# write access
+[ Actor ] ---> ( Storage )
+
+# modifying access
+[ Actor ]<->( Storage )
+
+# channel
+# unidirectional
+[ Actor ] -->o--> ( Storage )
+# bidirectional
+[ Actor ]--o--( Storage )
+# request-response
+[ Actor ]-->(req)-->( Storage )
+[ Actor ]<--(res)<--( Storage )
+# request-response, abbreviated
+            R>
+[ Actor ]---o---( Storage )
+
+# shared storage
+[ Actor1 ] <---> ( Storage ) <---> [ Actor2 ]
+
+# structure variance
+[        ] <--> {  [ Actor2 ]  }
+[ Actor1 ]--o------[ Actor2 ]
