@@ -10,3 +10,4 @@ Discussing software architecture, made simple
 * [ ] Document an existing software architecture with Dreitafel
 * [ ] Create FMC syntax guide, as documentation, and eat-your-own-dogfood
 * [ ] Create badge :)
+* [ ] Build & deploy gist/jsfiddle/play equivalent.
