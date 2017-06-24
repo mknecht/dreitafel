@@ -1,0 +1,25 @@
+# title = id for simple cases
+
+[ syslog ] -> ("/var/log/syslog")
+
+# Variant 1: Avoid IDs, give titles always
+# - titles are not great for linking, IDs
+
+[ "The Syslog Daemon" ]  ->  ("/var/log/syslog")
+
+[ "The Syslog Daemon" ] --o-- [ Your app ]
+
+[ Your app ] --o-- [ User ]
+
+# Variant 2: With ID, Graphviz-style, defining properties on top
+# + “soft properties” are centralized
+# + ID allows for linking and for creating separate boxes!
+# - more text
+# - centralized is not a great argument: search & replace
+
+
+[ syslogd, "The Syslog Daemon" ]
+( syslog, "/var/log/syslog" )
+
+[ syslogd ] -> ( syslog )
+[ syslogd ] --o-- [ Your app ]

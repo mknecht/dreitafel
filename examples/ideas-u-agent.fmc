@@ -1,0 +1,40 @@
+# A u-formed agent.
+#
+# It conveys the notion of “container”,
+# for example a webapp deployed by an application server,
+# or a docker container run by the daemon.
+
+# Tomcat deploys webapp
+
+[]                          []
+[]--o--[ Your webapp ]--o-- []
+[]                          []
+[]                          []
+[]--------------------------[]
+[          Tomcat            ]
+[----------------------------]
+
+
+# Tomcat deploys webapp
+
+[]                          []
+[]--o--[ Django      ]--o-- []
+[]                          []
+[]--o--[ Postgres    ]--o-- []
+[]                          []
+[]--o--[ Webcache    ]--o-- []
+[]                          []
+[]                          []
+[]--------------------------[]
+[      Docker Daemon         ]
+[----------------------------]
+
+# Barebones:
+
+[]--o--[ Django       ]--o--[]
+[
+[]--o--[ Postgres     ]--o--[]
+[
+[]--o--[ Webcache     ]--o--[]
+[
+[      Docker Daemon         ]

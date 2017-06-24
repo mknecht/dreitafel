@@ -1,0 +1,25 @@
+# Variant 1: All in one
+
+[                              ]
+| Database server              ]   --o--  [ Application Server ]
+|
+| [Postgres] <-> ( WAL files )
+|     |
+|     o
+|     |
+| [MongoDB]  ------------------------o-- [ Webapp ]
+[                              ]
+
+
+# Variant 2: Separate diagram structure from connections:
+
+[ Database server ] --o-- [ Application Server ]
+[ [ Postgres ]    ]
+[ [ MongoDB ]     ]
+
+
+[ Postgres ] <---> ( WAL files)
+[          ]
+[          ] --o-- [ MongoDB ]
+
+[MongoDB] --o-- [ Webapp ]
