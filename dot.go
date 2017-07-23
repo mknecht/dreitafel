@@ -6,6 +6,10 @@ import (
 	"sync"
 )
 
+var header = `# Generated with Dreitafel
+# https://github.com/mknecht/dreitafel
+`
+
 type Generator interface {
 	Generate()
 }
@@ -19,20 +23,26 @@ func (DotGenerator) Generate(diagrams chan *FmcBlockDiagram, errors chan error, 
 	var diagram *FmcBlockDiagram
 
 	for diagram = <-diagrams; diagram != nil; diagram = <-diagrams {
-		fmt.Println(diagram.title)
-		fmt.Println(" === ")
-		fmt.Println("Actors: ")
+		print := func(txt string) {
+			fmt.Printf("        %v\n", txt)
+		}
+		fmt.Println(header)
+		fmt.Printf("digraph \"%v\" {\n", diagram.title)
+		print(`# horizontal layout`)
+		print(`label="\G";`)
+		print("rankdir=LR;")
+
 		for _, node := range diagram.nodes {
 			if reflect.TypeOf(node) == reflect.TypeOf(&Actor{}) {
-				fmt.Printf("• %v\n", node.(*Actor).title)
+				print(fmt.Sprintf("%v[shape=box];", node.(*Actor).title))
 			}
 		}
-		fmt.Println("Storages: ")
 		for _, node := range diagram.nodes {
 			if reflect.TypeOf(node) == reflect.TypeOf(&Storage{}) {
-				fmt.Printf("• %v\n", node.(*Storage).title)
+				print(fmt.Sprintf("%v[shape=box,style=rounded];", node.(*Storage).title))
 			}
 		}
+		fmt.Printf("} // end digraph\n")
 	}
 
 }

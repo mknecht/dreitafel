@@ -1,6 +1,20 @@
 # Dreitafel
 Discussing software architecture, made simple
 
+## Trying it
+
+Convert a diagram to dot:
+
+```
+./try.sh "[Engine] (Gasoline) (Oil)"
+```
+
+Convert dot to an image:
+
+```
+dot -Tpng testground/simple.dot > testground/simple.png
+```
+
 ## The (Planned) Architecture of Dreitafel
 
 Dreitafel will consist of three main components:
@@ -69,12 +83,25 @@ Example of errors:
 The **Dot Generator** takes the valid FMC block diagram model, 
 and produces a dot graph representing the FMC diagram.
 
-## Roadmap Ideas
+## The road ahead
+
+## Next technical steps
+
+To remember where I left off:
+
+* Use logging system, and log to stderr, so that the diagram (stdout) can be piped
+* Write some simple system tests
+* Read from stdin
+* `FmcBlockDiagram.Generate()` -> use interface
+* Make DOT just one implementation: `FmcNode` implements Dot-generating interface, which the DOT-generator of the FMC Block diagram uses
+* Support ReadAccess in lexer, parser, dot
+
+### Roadmap (Ideas)
 
 * Minimal deployment
   * [ ] Diagram elements (only one of the following per diagram):
-    * [ ] Actor
-    * [ ] Storage
+    * [X] Actor
+    * [X] Storage
     * [ ] Actor reads to Storage
     * [ ] Actor writes to Storage.
   * [ ] Compiler for FMC block diagram text-syntax to graphviz' dot.
@@ -110,11 +137,3 @@ and produces a dot graph representing the FMC diagram.
   * Layout hints
   * Zooming: Step “into” an element to view its details.
   * Printable version
-
-
-## Next steps
-
-* `FmcBlockDiagram.GenerateDot()`
-* `FmcNode.GetDotDefinition()` for nodes (Actor, Storage)
-* `FmcEdge.GetDotDefinition()` for edges (ReadAccess)
-* Implement WriteAccess and take care of arbitrary direction :)
