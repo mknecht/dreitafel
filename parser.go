@@ -90,12 +90,17 @@ func buildDiagram(tokens <-chan Token, diagrams chan<- *FmcBlockDiagram, errors 
 
 		fmt.Println(token)
 		if token.GetTokenType() == TokenTypeActor {
-
 			node := token.(*Node)
 			actor := Actor{}
 			actor.FmcBaseNode.id = node.title
 			actor.FmcBaseNode.title = node.title
 			diagram.nodes = append(diagram.nodes, &actor)
+		} else if token.GetTokenType() == TokenTypeStorage {
+			node := token.(*Node)
+			storage := Storage{}
+			storage.FmcBaseNode.id = node.title
+			storage.FmcBaseNode.title = node.title
+			diagram.nodes = append(diagram.nodes, &storage)
 		}
 		// I want pattern matching. :(
 
@@ -123,11 +128,26 @@ func (lexer *Lexer) isdone() bool {
 }
 
 func (lexer *Lexer) acceptStorage() Token {
-	return nil
+	exp := `\(\s*(` + titleExp + `)\s*\)`
+
+	matches := regexp.MustCompile(exp).FindSubmatch([]byte((*lexer.line)[lexer.col:]))
+
+	if matches == nil {
+		return nil
+	}
+
+	title := string(matches[1])
+
+	node := Node{title: title}
+	node.tokenType = TokenTypeStorage
+	node.from = lexer.col + len(title)
+	node.to = lexer.col
+	lexer.col += len(string(matches[0]))
+	return &node
 }
 
 func (lexer *Lexer) acceptActor() Token {
-	exp := `\[\s+(` + titleExp + `)\s+\]`
+	exp := `\[\s*(` + titleExp + `)\s*\]`
 
 	matches := regexp.MustCompile(exp).FindSubmatch([]byte((*lexer.line)[lexer.col:]))
 

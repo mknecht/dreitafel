@@ -2,6 +2,7 @@ package dreitafel
 
 import (
 	"fmt"
+	"reflect"
 	"sync"
 )
 
@@ -22,7 +23,15 @@ func (DotGenerator) Generate(diagrams chan *FmcBlockDiagram, errors chan error, 
 		fmt.Println(" === ")
 		fmt.Println("Actors: ")
 		for _, node := range diagram.nodes {
-			fmt.Printf("• %v\n", node.(*Actor).title)
+			if reflect.TypeOf(node) == reflect.TypeOf(&Actor{}) {
+				fmt.Printf("• %v\n", node.(*Actor).title)
+			}
+		}
+		fmt.Println("Storages: ")
+		for _, node := range diagram.nodes {
+			if reflect.TypeOf(node) == reflect.TypeOf(&Storage{}) {
+				fmt.Printf("• %v\n", node.(*Storage).title)
+			}
 		}
 	}
 

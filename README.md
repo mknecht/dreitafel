@@ -114,8 +114,6 @@ and produces a dot graph representing the FMC diagram.
 
 ## Next steps
 
-* `parser:acceptStorage()`: implement analogous to `parser.acceptActor()`
-* `parser.buildDiagram()`: store storages and accesses
 * `FmcBlockDiagram.GenerateDot()`
 * `FmcNode.GetDotDefinition()` for nodes (Actor, Storage)
 * `FmcEdge.GetDotDefinition()` for edges (ReadAccess)
