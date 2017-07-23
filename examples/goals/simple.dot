@@ -1,0 +1,9 @@
+digraph G {
+        # horizontal layout
+        rankdir=LR;
+
+        Actor[shape=box];
+        Storage[shape=box,style="rounded"];
+
+        Actor -> Storage;
+}

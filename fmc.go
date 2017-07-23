@@ -1,13 +1,33 @@
+// model for FMC block diagram
 package dreitafel
 
 type FmcBlockDiagram struct {
-	actor   *ActorNode
-	storage *StorageNode
-
-	edge *Edge
+	title string
+	nodes []FmcNode
+	edges []FmcEdge
 }
 
-type Edge struct {
-	actor   *ActorNode
-	storage *StorageNode
+type FmcNode interface {
+}
+
+type FmcBaseNode struct {
+	id    string
+	title string
+}
+
+type Actor struct {
+	FmcBaseNode
+}
+
+type Storage struct {
+	FmcBaseNode
+}
+
+type FmcEdge interface {
+}
+
+// bipartite graph
+type FmcBaseEdge struct {
+	actor   *Actor
+	storage *Storage
 }

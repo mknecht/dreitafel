@@ -110,3 +110,13 @@ and produces a dot graph representing the FMC diagram.
   * Layout hints
   * Zooming: Step “into” an element to view its details.
   * Printable version
+
+
+## Next steps
+
+* `parser:acceptStorage()`: implement analogous to `parser.acceptActor()`
+* `parser.buildDiagram()`: store storages and accesses
+* `FmcBlockDiagram.GenerateDot()`
+* `FmcNode.GetDotDefinition()` for nodes (Actor, Storage)
+* `FmcEdge.GetDotDefinition()` for edges (ReadAccess)
+* Implement WriteAccess and take care of arbitrary direction :)
