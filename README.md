@@ -92,8 +92,6 @@ To remember where I left off:
 * Use logging system, and log to stderr, so that the diagram (stdout) can be piped
 * Write some simple system tests
 * Read from stdin
-* `FmcBlockDiagram.Generate()` -> use interface
-* Make DOT just one implementation: `FmcNode` implements Dot-generating interface, which the DOT-generator of the FMC Block diagram uses
 * Support ReadAccess in lexer, parser, dot
 
 ### Roadmap (Ideas)
