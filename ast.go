@@ -6,6 +6,7 @@ type TokenType int
 const (
 	TokenTypeActor TokenType = iota
 	TokenTypeStorage
+	TokenTypeLeftAccess
 	TokenTypeRightAccess
 	TokenTypeLineEnd
 )

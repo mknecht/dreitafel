@@ -2,6 +2,7 @@ package dreitafel
 
 import (
 	"fmt"
+	"reflect"
 	"regexp"
 	"sync"
 )
@@ -77,7 +78,7 @@ func (lexer *Lexer) tokenizeLine() {
 			lexer.unrecognized <- fmt.Errorf("Don't know what that is: %v", (*lexer.line)[lexer.col:])
 			lexer.col = len(*lexer.line)
 		} else {
-			fmt.Printf("Recognized until %v/%v: %q\n", lexer.col, len(*lexer.line), token)
+			fmt.Printf("Recognized until %v/%v: %v (%q)\n", lexer.col, len(*lexer.line), reflect.TypeOf(token), token)
 			lexer.recognized <- token
 		}
 	}
@@ -86,23 +87,97 @@ func (lexer *Lexer) tokenizeLine() {
 func buildDiagram(tokens <-chan Token, diagrams chan<- *FmcBlockDiagram, errors chan<- error) {
 	diagram := FmcBlockDiagram{title: "My first diagram"}
 
+	var prevNode FmcNode
+	var prevToken Token
+
+	resetPrev := func() { prevNode = nil; prevToken = nil }
+	setPrev := func(n FmcNode, t Token) { prevNode = n; prevToken = t }
+
 	for token := <-tokens; token != nil; token = <-tokens {
 
 		fmt.Println(token)
-		if token.GetTokenType() == TokenTypeActor {
+		switch token.GetTokenType() {
+		case TokenTypeActor:
 			node := token.(*Node)
 			actor := Actor{}
 			actor.FmcBaseNode.id = node.title
 			actor.FmcBaseNode.title = node.title
 			diagram.nodes = append(diagram.nodes, &actor)
-		} else if token.GetTokenType() == TokenTypeStorage {
+
+			if prevToken != nil {
+				switch prevToken.GetTokenType() {
+				case TokenTypeLeftAccess, TokenTypeRightAccess:
+					edge := prevNode.(*FmcBaseEdge)
+					if edge.actor != nil {
+						fmt.Println("Syntax error: Bipartite graph must connect Actor to Storage, not Actor to Actor directly.")
+						resetPrev()
+						continue
+					}
+					edge.actor = &actor
+					edge.edgeType = EdgeTypeRead
+					diagram.edges = append(diagram.edges, edge)
+
+					// other tokens before are fine:
+					// a “multiple expressions” line
+				}
+			}
+
+			setPrev(&actor, token)
+		case TokenTypeStorage:
 			node := token.(*Node)
 			storage := Storage{}
 			storage.FmcBaseNode.id = node.title
 			storage.FmcBaseNode.title = node.title
 			diagram.nodes = append(diagram.nodes, &storage)
+
+			if prevToken != nil {
+				switch prevToken.GetTokenType() {
+				case TokenTypeLeftAccess, TokenTypeRightAccess:
+					edge := prevNode.(*FmcBaseEdge)
+					if edge.storage != nil {
+						fmt.Println("Syntax error: Bipartite graph must connect Actor to Storage, not Storage to Storage directly.")
+						resetPrev()
+						continue
+					}
+					edge.storage = &storage
+					diagram.edges = append(diagram.edges, edge)
+
+					// other tokens before are fine:
+					// a “multiple expressions” line
+				}
+			}
+
+			setPrev(&storage, token)
+		case TokenTypeLeftAccess, TokenTypeRightAccess:
+			if prevToken == nil {
+				fmt.Println("Syntax error: Dangling access")
+				resetPrev()
+				continue
+			}
+
+			edge := FmcBaseEdge{}
+			switch prevToken.GetTokenType() {
+			case TokenTypeActor:
+				edge.actor = prevNode.(*Actor)
+				if token.GetTokenType() == TokenTypeLeftAccess {
+					edge.edgeType = EdgeTypeRead
+				} else {
+					edge.edgeType = EdgeTypeWrite
+				}
+			case TokenTypeStorage:
+				edge.storage = prevNode.(*Storage)
+				if token.GetTokenType() == TokenTypeLeftAccess {
+					edge.edgeType = EdgeTypeWrite
+				} else {
+					edge.edgeType = EdgeTypeRead
+				}
+			default:
+				fmt.Println("Syntax error: Read Access must connect Actor and Storage")
+				resetPrev()
+			}
+
+			setPrev(&edge, token)
 		}
-		// I want pattern matching. :(
 
 		// • actor/storage
 		//   -> emit actor
@@ -124,11 +199,12 @@ func buildDiagram(tokens <-chan Token, diagrams chan<- *FmcBlockDiagram, errors 
 }
 
 func (lexer *Lexer) isdone() bool {
+	fmt.Printf("Checking tokenizer progress: %v >= %v ?\n", lexer.col, len(*lexer.line))
 	return lexer.col >= len(*lexer.line)
 }
 
 func (lexer *Lexer) acceptStorage() Token {
-	exp := `\(\s*(` + titleExp + `)\s*\)`
+	exp := `^\(\s*(` + titleExp + `)\s*\)`
 
 	matches := regexp.MustCompile(exp).FindSubmatch([]byte((*lexer.line)[lexer.col:]))
 
@@ -147,7 +223,7 @@ func (lexer *Lexer) acceptStorage() Token {
 }
 
 func (lexer *Lexer) acceptActor() Token {
-	exp := `\[\s*(` + titleExp + `)\s*\]`
+	exp := `^\[\s*(` + titleExp + `)\s*\]`
 
 	matches := regexp.MustCompile(exp).FindSubmatch([]byte((*lexer.line)[lexer.col:]))
 
@@ -166,7 +242,7 @@ func (lexer *Lexer) acceptActor() Token {
 }
 
 func (lexer *Lexer) acceptWhitespaceIfAny() bool {
-	exp := `\s*`
+	exp := `^\s*`
 
 	match := regexp.MustCompile(exp).FindString((*lexer.line)[lexer.col:])
 
@@ -180,7 +256,7 @@ func (lexer *Lexer) acceptWhitespaceIfAny() bool {
 }
 
 func (lexer *Lexer) acceptRightwardsAccess() Token {
-	exp := `-+>`
+	exp := `^-+>`
 
 	match := regexp.MustCompile(exp).FindString((*lexer.line)[lexer.col:])
 

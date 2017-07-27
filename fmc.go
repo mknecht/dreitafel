@@ -23,11 +23,19 @@ type Storage struct {
 	FmcBaseNode
 }
 
+type EdgeType int
+
+const (
+	EdgeTypeRead EdgeType = iota
+	EdgeTypeWrite
+)
+
 type FmcEdge interface {
 }
 
 // bipartite graph
 type FmcBaseEdge struct {
-	actor   *Actor
-	storage *Storage
+	edgeType EdgeType
+	actor    *Actor
+	storage  *Storage
 }

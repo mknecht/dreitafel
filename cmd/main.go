@@ -12,5 +12,6 @@ func main() {
 		os.Exit(2)
 	}
 
+	fmt.Printf("Parsing: '%v'", os.Args[1])
 	dreitafel.CompileToSvgToStdout(os.Args[1])
 }

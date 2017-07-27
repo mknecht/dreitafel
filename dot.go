@@ -29,20 +29,38 @@ func (diagram *FmcBlockDiagram) GenerateDot() {
 	}
 	fmt.Println(header)
 	fmt.Printf("digraph \"%v\" {\n", diagram.title)
-	print(`# horizontal layout`)
+	print(``)
 	print(`label="\G";`)
+	print(`# horizontal layout`)
 	print("rankdir=LR;")
 
+	print("")
+	print(`# Actors`)
 	for _, node := range diagram.nodes {
 		if reflect.TypeOf(node) == reflect.TypeOf(&Actor{}) {
 			print(fmt.Sprintf("%v[shape=box];", node.(*Actor).title))
 		}
 	}
+	print("")
+	print(`# Storages`)
 	for _, node := range diagram.nodes {
 		if reflect.TypeOf(node) == reflect.TypeOf(&Storage{}) {
 			print(fmt.Sprintf("%v[shape=box,style=rounded];", node.(*Storage).title))
 		}
 	}
-	fmt.Printf("} // end digraph\n")
+	print("")
+	print(`# Accesses`)
+	for _, edge_ := range diagram.edges {
+		var edgestr string
+		edge := edge_.(*FmcBaseEdge)
 
+		if edge.edgeType == EdgeTypeRead {
+			edgestr = fmt.Sprintf("%v -> %v;", edge.storage.title, edge.actor.title)
+		} else {
+			edgestr = fmt.Sprintf("%v -> %v;", edge.actor.title, edge.storage.title)
+		}
+
+		print(edgestr)
+	}
+	fmt.Printf("} // end digraph\n")
 }

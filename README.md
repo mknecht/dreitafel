@@ -90,18 +90,17 @@ and produces a dot graph representing the FMC diagram.
 To remember where I left off:
 
 * Use logging system, and log to stderr, so that the diagram (stdout) can be piped
+* Read from stdin, the goal being pipelines like: `cat simple.fmc | dreitafel | dot -Tsvg`
 * Write some simple system tests
-* Read from stdin
-* Support ReadAccess in lexer, parser, dot
 
 ### Roadmap (Ideas)
 
 * Minimal deployment
-  * [ ] Diagram elements (only one of the following per diagram):
+  * [X] Diagram elements
     * [X] Actor
     * [X] Storage
-    * [ ] Actor reads to Storage
-    * [ ] Actor writes to Storage.
+    * [X] Actor reads to Storage
+    * [X] Actor writes to Storage.
   * [ ] Compiler for FMC block diagram text-syntax to graphviz' dot.
   * [ ] Compiler GH-flavored markdown with FMC block diagrams to HTML.
   * [ ] Webapp live-rendering this.
