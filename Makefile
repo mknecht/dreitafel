@@ -1,15 +1,17 @@
 # Use the official image to compile DreiTafel
 
+INDOCKER:=docker run -it --rm -v "${GOPATH}":/go -v "${PWD}":/go/src/dreitafel -w /go/src/dreitafel golang
+
 .PHONY: build
-build: deps
-	go build -v
-
 deps:
-	go get
+	$(INDOCKER) go get
 
-dbuild:
-	docker run -it --rm -v "${GOPATH}":/go -v "${PWD}":/go/src/dreitafel -w /go/src/dreitafel golang go build
+build:
+	$(INDOCKER) go build
+
+dreitafel: *.go
+	$(INDOCKER) go build -o dreitafel cmd/main.go
 
 .PHONY: examples
-examples:
-	find examples/ -name "*.dot" -exec dot -Tpng -O {} \;
+examples: dreitafel
+	(cd examples && ./generate.sh)

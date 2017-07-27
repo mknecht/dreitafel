@@ -2,7 +2,10 @@ package dreitafel
 
 import (
 	"fmt"
+	"os"
 	"sync"
+
+	log "github.com/Sirupsen/logrus"
 )
 
 func CompileToSvgToStdout(input string) {
@@ -21,20 +24,21 @@ func CompileToSvgToStdout(input string) {
 	// feed the compiler the input
 	lines <- &input
 
-	fmt.Println("waiting for parser to finish.")
+	log.Debug("waiting for parser to finish.")
 	waitGroup.Add(1)
 	lines <- nil // end token
 	waitGroup.Wait()
 
-	fmt.Println("waiting for diagram builder to finish.")
+	log.Debug("waiting for diagram builder to finish.")
 	waitGroup.Add(1)
 	fmcdiagrams <- nil // end token
 	waitGroup.Wait()
 
-	fmt.Println("waiting for error handler to finish.")
+	log.Debug("waiting for error handler to finish.")
 	waitGroup.Add(1)
 	errors <- nil
 	waitGroup.Wait()
+	log.Debug("Compilation done.")
 }
 
 func forwardFmcToDot(in chan *FmcBlockDiagram, out chan DotGenerator) {
@@ -56,7 +60,7 @@ func printUntilNil(errors <-chan error, waitGroup *sync.WaitGroup) {
 		if err == nil {
 			break
 		}
-		fmt.Println(err)
+		fmt.Fprintf(os.Stderr, "%v\n", err)
 	}
 
 	waitGroup.Done()

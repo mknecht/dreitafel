@@ -1,10 +1,13 @@
 package dreitafel
 
 import (
+	"errors"
 	"fmt"
 	"reflect"
 	"regexp"
 	"sync"
+
+	log "github.com/Sirupsen/logrus"
 )
 
 // REDOME
@@ -25,27 +28,28 @@ type Lexer struct {
 	unrecognized chan<- error
 }
 
-func KeepParsing(lines <-chan *string, diagrams chan<- *FmcBlockDiagram, errors chan<- error, waitGroup *sync.WaitGroup) {
+func KeepParsing(lines <-chan *string, diagrams chan<- *FmcBlockDiagram, errorsChan chan<- error, waitGroup *sync.WaitGroup) {
+
 	defer waitGroup.Done()
 
 	tokens := make(chan Token)
 
-	go tokenize(lines, tokens, errors)
+	go tokenize(lines, tokens, errorsChan)
 
-	buildDiagram(tokens, diagrams, errors)
+	buildDiagram(tokens, diagrams, errorsChan)
 }
 
-func tokenize(lines <-chan *string, recognizedTokens chan<- Token, errors chan<- error) {
+func tokenize(lines <-chan *string, recognizedTokens chan<- Token, errorsChan chan<- error) {
 	var line *string
 
 	lineNo := 0
 	for line = <-lines; line != nil; line = <-lines {
 		lineNo++
-		lexer := Lexer{row: lineNo, recognized: recognizedTokens, unrecognized: errors, line: line, lineNo: lineNo}
+		lexer := Lexer{row: lineNo, recognized: recognizedTokens, unrecognized: errorsChan, line: line, lineNo: lineNo}
 		lexer.tokenizeLine()
 	}
 	recognizedTokens <- nil // terminate the consumer as well
-	fmt.Println("Tokenizer: done")
+	log.Debug("Tokenizer: done")
 }
 
 func (lexer *Lexer) tokenizeLine() {
@@ -58,7 +62,6 @@ func (lexer *Lexer) tokenizeLine() {
 		// keep recognizing actor, storage, connection, whitespace & EOL
 		// on error, skip rest of line
 
-		fmt.Printf("%v <= %v\n", lexer.col, len(*lexer.line))
 		if lexer.isdone() {
 			return
 		}
@@ -75,16 +78,17 @@ func (lexer *Lexer) tokenizeLine() {
 			token = lexer.acceptRightwardsAccess()
 		}
 		if token == nil {
-			lexer.unrecognized <- fmt.Errorf("Don't know what that is: %v", (*lexer.line)[lexer.col:])
+			lexer.unrecognized <- lexer.errorf("Don't know what that is: %v", (*lexer.line)[lexer.col:])
 			lexer.col = len(*lexer.line)
 		} else {
-			fmt.Printf("Recognized until %v/%v: %v (%q)\n", lexer.col, len(*lexer.line), reflect.TypeOf(token), token)
+			log.Debugf("Recognized until %v/%v: %v (%q)", lexer.col, len(*lexer.line), reflect.TypeOf(token), token)
 			lexer.recognized <- token
 		}
 	}
 }
 
-func buildDiagram(tokens <-chan Token, diagrams chan<- *FmcBlockDiagram, errors chan<- error) {
+func buildDiagram(tokens <-chan Token, diagrams chan<- *FmcBlockDiagram, errorsChan chan<- error) {
+	plog := log.New()
 	diagram := FmcBlockDiagram{title: "My first diagram"}
 
 	var prevNode FmcNode
@@ -95,7 +99,7 @@ func buildDiagram(tokens <-chan Token, diagrams chan<- *FmcBlockDiagram, errors 
 
 	for token := <-tokens; token != nil; token = <-tokens {
 
-		fmt.Println(token)
+		plog.Debug(token)
 		switch token.GetTokenType() {
 		case TokenTypeActor:
 			node := token.(*Node)
@@ -109,7 +113,7 @@ func buildDiagram(tokens <-chan Token, diagrams chan<- *FmcBlockDiagram, errors 
 				case TokenTypeLeftAccess, TokenTypeRightAccess:
 					edge := prevNode.(*FmcBaseEdge)
 					if edge.actor != nil {
-						fmt.Println("Syntax error: Bipartite graph must connect Actor to Storage, not Actor to Actor directly.")
+						errorsChan <- errors.New("Syntax error: Bipartite graph must connect Actor to Storage, not Actor to Actor directly.")
 						resetPrev()
 						continue
 					}
@@ -135,7 +139,7 @@ func buildDiagram(tokens <-chan Token, diagrams chan<- *FmcBlockDiagram, errors 
 				case TokenTypeLeftAccess, TokenTypeRightAccess:
 					edge := prevNode.(*FmcBaseEdge)
 					if edge.storage != nil {
-						fmt.Println("Syntax error: Bipartite graph must connect Actor to Storage, not Storage to Storage directly.")
+						errorsChan <- errors.New("Syntax error: Bipartite graph must connect Actor to Storage, not Storage to Storage directly.")
 						resetPrev()
 						continue
 					}
@@ -150,7 +154,7 @@ func buildDiagram(tokens <-chan Token, diagrams chan<- *FmcBlockDiagram, errors 
 			setPrev(&storage, token)
 		case TokenTypeLeftAccess, TokenTypeRightAccess:
 			if prevToken == nil {
-				fmt.Println("Syntax error: Dangling access")
+				errorsChan <- errors.New("Syntax error: Dangling access")
 				resetPrev()
 				continue
 			}
@@ -172,7 +176,7 @@ func buildDiagram(tokens <-chan Token, diagrams chan<- *FmcBlockDiagram, errors 
 					edge.edgeType = EdgeTypeRead
 				}
 			default:
-				fmt.Println("Syntax error: Read Access must connect Actor and Storage")
+				errorsChan <- errors.New("Syntax error: Read Access must connect Actor and Storage")
 				resetPrev()
 			}
 
@@ -199,7 +203,6 @@ func buildDiagram(tokens <-chan Token, diagrams chan<- *FmcBlockDiagram, errors 
 }
 
 func (lexer *Lexer) isdone() bool {
-	fmt.Printf("Checking tokenizer progress: %v >= %v ?\n", lexer.col, len(*lexer.line))
 	return lexer.col >= len(*lexer.line)
 }
 
@@ -251,7 +254,7 @@ func (lexer *Lexer) acceptWhitespaceIfAny() bool {
 	}
 
 	lexer.col += len(match)
-	fmt.Printf("Ate whitespace until %v\n", lexer.col)
+	log.Debugf("Ate whitespace until %v", lexer.col)
 	return true
 }
 
@@ -265,7 +268,7 @@ func (lexer *Lexer) acceptRightwardsAccess() Token {
 	}
 
 	lexer.col += len(match)
-	fmt.Printf("Ate rightwards access until %v\n", lexer.col)
+	log.Debugf("Ate rightwards access until %v", lexer.col)
 	return &BaseToken{tokenType: TokenTypeRightAccess, from: lexer.col - len(match), to: lexer.col}
 }
 

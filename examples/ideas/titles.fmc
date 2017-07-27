@@ -23,3 +23,21 @@
 
 [ syslogd ] -> ( syslog )
 [ syslogd ] --o-- [ Your app ]
+
+# Variant 3: Use IDs, and a preamble in a structured language
+# + known syntax, no NIH syndrome for something as well-understood as properties
+# - not so beautiful
+
+---
+- actors:
+  syslogd:
+    title: "The Syslog Daemon"
+    href: "https://linux.die.net/man/8/syslogd"
+- storages:
+  syslog:
+    title: "/var/log/syslog"
+    href: "#syslog"
+---
+
+[ syslogd ] -> ( syslog )
+[ syslogd ] --o-- [ Your app ]

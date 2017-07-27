@@ -80,7 +80,7 @@ Example of errors:
 * An actor reads from an actor (FMC block diagrams are bipartite graph)
 * A channel is dangling, i.e. not connected to anything.
 
-The **Dot Generator** takes the valid FMC block diagram model, 
+The **Dot Generator** takes the valid FMC block diagram model,
 and produces a dot graph representing the FMC diagram.
 
 ## The road ahead
@@ -89,11 +89,9 @@ and produces a dot graph representing the FMC diagram.
 
 To remember where I left off:
 
-* Use logging system, and log to stderr, so that the diagram (stdout) can be piped
-* Read from stdin, the goal being pipelines like: `cat simple.fmc | dreitafel | dot -Tsvg`
 * Write some simple system tests
 
-### Roadmap (Ideas)
+### Roadmap
 
 * Minimal deployment
   * [X] Diagram elements
@@ -101,24 +99,30 @@ To remember where I left off:
     * [X] Storage
     * [X] Actor reads to Storage
     * [X] Actor writes to Storage.
-  * [ ] Compiler for FMC block diagram text-syntax to graphviz' dot.
+  * [X] Compiler for FMC block diagram text-syntax to graphviz' dot.
   * [ ] Compiler GH-flavored markdown with FMC block diagrams to HTML.
-  * [ ] Webapp live-rendering this.
+  * [ ] Webapp live-rendering this README.
   * [ ] Deploy this service on a host.
-  * [ ] Create badge. :)
+* Publish
+  * Add diagram elements and statements.
+    * [ ] modifying access
+    * [ ] unidirectional channel
+    * [ ] bidirectional channel
   * [ ] Create FMC syntax guide, as documentation, and eat-your-own-dogfood.
+  * [ ] Logo! (Of course)
+* 1.0
+  * [ ] CLI <3 — i/o with files/stdin/stdout, proper config
+  * [ ] Styling of the diagram, making it look more hand-drawn
+  * [ ] Beautiful titles, with spaces, all kinds of characters.
+  * [ ] Syntax: Comments
+  * [ ] Create badge. :)
   * [ ] Build & deploy gist/jsfiddle/play equivalent.
-* Add diagram elements and statements.
-  * [ ] support for arbitrary number of actors & storages
-  * [ ] reading access
-  * [ ] modifying access
-  * [ ] unidirectional channel
-  * [ ] bidirectional channel
   * [ ] Human Actor
   * [ ] Support for IDs to centralize common attributes when an element re-occurs
   * [ ] multi-line elements
-  * [ ] 2d connections (vertical, diagonal and freeflowing)
   * [ ] structure variance
+* The real deal
+  * [ ] 2d connections (vertical, diagonal and freeflowing)
   * [ ] U-formed actor
   * [ ] Nest elements inside an actor or storage to group them.
 * Proofs of concept:
@@ -128,9 +132,11 @@ To remember where I left off:
 * Possible features
   * Drawing styles: whiteboard, formal, chalk, business-flashy
   * Links: Within diagram, within page, external  - org syntax?
+  * Emacs mode <3
   * Comments: Using GH issues?
   * Changes: Using GH PRs?
   * Composability: include diagrams
   * Layout hints
   * Zooming: Step “into” an element to view its details.
   * Printable version
+  * Simple flow diagrams, too.

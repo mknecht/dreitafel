@@ -2,16 +2,19 @@ package main
 
 import (
 	"dreitafel"
-	"fmt"
 	"os"
+
+	log "github.com/Sirupsen/logrus"
 )
 
 func main() {
+	log.SetLevel(log.DebugLevel)
+
 	if len(os.Args) < 2 {
-		fmt.Printf("Usage: pattern to parse\n")
+		log.Errorf("Usage: pattern to parse\n")
 		os.Exit(2)
 	}
 
-	fmt.Printf("Parsing: '%v'", os.Args[1])
+	log.Debugf("Parsing: '%v'", os.Args[1])
 	dreitafel.CompileToSvgToStdout(os.Args[1])
 }

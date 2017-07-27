@@ -30,9 +30,10 @@ func (diagram *FmcBlockDiagram) GenerateDot() {
 	fmt.Println(header)
 	fmt.Printf("digraph \"%v\" {\n", diagram.title)
 	print(``)
-	print(`label="\G";`)
 	print(`# horizontal layout`)
 	print("rankdir=LR;")
+	print("splines=ortho;")
+	print("nodesep=0.8;")
 
 	print("")
 	print(`# Actors`)

@@ -1,0 +1,4 @@
+(Fuel) -> [Engine] -> (Rotation)
+(Oil)  -> [Engine] -> (Heat)
+
+[Engine] -> (Electricity) -> [Phonecharger]
