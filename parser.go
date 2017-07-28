@@ -78,6 +78,9 @@ func (lexer *Lexer) tokenizeLine() {
 			token = lexer.acceptRightwardsAccess()
 		}
 		if token == nil {
+			token = lexer.acceptLeftwardsAccess()
+		}
+		if token == nil {
 			lexer.unrecognized <- lexer.errorf("Don't know what that is: %v", (*lexer.line)[lexer.col:])
 			lexer.col = len(*lexer.line)
 		} else {
@@ -118,7 +121,6 @@ func buildDiagram(tokens <-chan Token, diagrams chan<- *FmcBlockDiagram, errorsC
 						continue
 					}
 					edge.actor = &actor
-					edge.edgeType = EdgeTypeRead
 					diagram.edges = append(diagram.edges, edge)
 
 					// other tokens before are fine:
@@ -165,38 +167,27 @@ func buildDiagram(tokens <-chan Token, diagrams chan<- *FmcBlockDiagram, errorsC
 				edge.actor = prevNode.(*Actor)
 				if token.GetTokenType() == TokenTypeLeftAccess {
 					edge.edgeType = EdgeTypeRead
+					log.Debug("Read access!")
 				} else {
+					log.Debug("Write access!")
 					edge.edgeType = EdgeTypeWrite
 				}
+				setPrev(&edge, token)
 			case TokenTypeStorage:
 				edge.storage = prevNode.(*Storage)
 				if token.GetTokenType() == TokenTypeLeftAccess {
+					log.Debug("Write access!")
 					edge.edgeType = EdgeTypeWrite
 				} else {
+					log.Debug("Read access!")
 					edge.edgeType = EdgeTypeRead
 				}
+				setPrev(&edge, token)
 			default:
 				errorsChan <- errors.New("Syntax error: Read Access must connect Actor and Storage")
 				resetPrev()
 			}
-
-			setPrev(&edge, token)
 		}
-
-		// • actor/storage
-		//   -> emit actor
-		//   -> if remembering connection:
-		//      (handle non-bipartite graph)
-		//      -> emit connection from previous node to this one
-		//   -> memorize node & reset connection
-		// • connection
-		//   -> if not remembering actor:
-		//     -> emit syntax error
-		//     -> skip until next element
-		//   -> memorize connection
-		//   -> go to beginning of loop
-		// •
-		// :error -> skip until next actor
 	}
 
 	diagrams <- &diagram
@@ -270,6 +261,20 @@ func (lexer *Lexer) acceptRightwardsAccess() Token {
 	lexer.col += len(match)
 	log.Debugf("Ate rightwards access until %v", lexer.col)
 	return &BaseToken{tokenType: TokenTypeRightAccess, from: lexer.col - len(match), to: lexer.col}
+}
+
+func (lexer *Lexer) acceptLeftwardsAccess() Token {
+	exp := `^<-+`
+
+	match := regexp.MustCompile(exp).FindString((*lexer.line)[lexer.col:])
+
+	if match == "" {
+		return nil
+	}
+
+	lexer.col += len(match)
+	log.Debugf("Ate leftwards access until %v", lexer.col)
+	return &BaseToken{tokenType: TokenTypeLeftAccess, from: lexer.col - len(match), to: lexer.col}
 }
 
 func (lexer *Lexer) errorf(format string, a ...interface{}) error {

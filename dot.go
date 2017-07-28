@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"reflect"
 	"sync"
+
+	log "github.com/Sirupsen/logrus"
 )
 
 var header = `# Generated with Dreitafel
@@ -56,8 +58,10 @@ func (diagram *FmcBlockDiagram) GenerateDot() {
 		edge := edge_.(*FmcBaseEdge)
 
 		if edge.edgeType == EdgeTypeRead {
+			log.Debug("Read access!")
 			edgestr = fmt.Sprintf("%v -> %v;", edge.storage.title, edge.actor.title)
 		} else {
+			log.Debug("Write access!")
 			edgestr = fmt.Sprintf("%v -> %v;", edge.actor.title, edge.storage.title)
 		}
 
