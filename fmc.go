@@ -7,6 +7,10 @@ type FmcBlockDiagram struct {
 	edges []FmcEdge
 }
 
+func (diagram *FmcBlockDiagram) String() string {
+	return diagram.title
+}
+
 type FmcNode interface {
 }
 

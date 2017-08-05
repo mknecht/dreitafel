@@ -19,10 +19,15 @@ type DotGenerator interface {
 func GenerateDot(diagrams chan DotGenerator, errors chan error, waitGroup *sync.WaitGroup) {
 	defer waitGroup.Done()
 
-	for diagram := <-diagrams; diagram != nil; diagram = <-diagrams {
+	for diagram := range diagrams {
+		if diagram == nil {
+			continue
+		}
+		log.Debugf("Got diagram: %v", diagram)
 		diagram.GenerateDot()
+		log.Debugf("Done generating diagram: %v", diagram)
 	}
-
+	log.Debug("Done generating diagrams")
 }
 
 func (diagram *FmcBlockDiagram) GenerateDot() {
@@ -58,10 +63,10 @@ func (diagram *FmcBlockDiagram) GenerateDot() {
 		edge := edge_.(*FmcBaseEdge)
 
 		if edge.edgeType == EdgeTypeRead {
-			log.Debug("Read access!")
+			log.Debug("Adding read access!")
 			edgestr = fmt.Sprintf("%v -> %v;", edge.storage.title, edge.actor.title)
 		} else {
-			log.Debug("Write access!")
+			log.Debug("Adding write access!")
 			edgestr = fmt.Sprintf("%v -> %v;", edge.actor.title, edge.storage.title)
 		}
 

@@ -40,15 +40,15 @@ func KeepParsing(lines <-chan *string, diagrams chan<- *FmcBlockDiagram, errorsC
 }
 
 func tokenize(lines <-chan *string, recognizedTokens chan<- Token, errorsChan chan<- error) {
-	var line *string
+	defer close(recognizedTokens) // terminate the consumer as well
 
 	lineNo := 0
-	for line = <-lines; line != nil; line = <-lines {
+	for line := range lines {
+		log.Debugf("Parsing line: '%v' @%v", *line, line)
 		lineNo++
 		lexer := Lexer{row: lineNo, recognized: recognizedTokens, unrecognized: errorsChan, line: line, lineNo: lineNo}
 		lexer.tokenizeLine()
 	}
-	recognizedTokens <- nil // terminate the consumer as well
 	log.Debug("Tokenizer: done")
 }
 
@@ -91,6 +91,8 @@ func (lexer *Lexer) tokenizeLine() {
 }
 
 func buildDiagram(tokens <-chan Token, diagrams chan<- *FmcBlockDiagram, errorsChan chan<- error) {
+	defer close(diagrams)
+
 	plog := log.New()
 	diagram := FmcBlockDiagram{title: "My first diagram"}
 
@@ -100,7 +102,7 @@ func buildDiagram(tokens <-chan Token, diagrams chan<- *FmcBlockDiagram, errorsC
 	resetPrev := func() { prevNode = nil; prevToken = nil }
 	setPrev := func(n FmcNode, t Token) { prevNode = n; prevToken = t }
 
-	for token := <-tokens; token != nil; token = <-tokens {
+	for token := range tokens {
 
 		plog.Debug(token)
 		switch token.GetTokenType() {
@@ -191,6 +193,7 @@ func buildDiagram(tokens <-chan Token, diagrams chan<- *FmcBlockDiagram, errorsC
 	}
 
 	diagrams <- &diagram
+	log.Debug("Diagram builder done.")
 }
 
 func (lexer *Lexer) isdone() bool {

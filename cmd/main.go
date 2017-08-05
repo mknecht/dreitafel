@@ -1,6 +1,7 @@
 package main
 
 import (
+	"bufio"
 	"dreitafel"
 	"os"
 
@@ -10,11 +11,19 @@ import (
 func main() {
 	log.SetLevel(log.DebugLevel)
 
-	if len(os.Args) < 2 {
-		log.Errorf("Usage: pattern to parse\n")
-		os.Exit(2)
-	}
+	lines := make(chan *string, 500) // lines are independent; statements don't span lines yet
 
-	log.Debugf("Parsing: '%v'", os.Args[1])
-	dreitafel.CompileToSvgToStdout(os.Args[1])
+	go func() {
+		defer close(lines)
+		reader := bufio.NewReader(os.Stdin)
+
+		for line, err := reader.ReadString('\n'); err == nil; line, err = reader.ReadString('\n') {
+			newline := line // need new memory location
+			log.Debugf("Read line: '%v' @%v", line, &line)
+			lines <- &newline
+		}
+		log.Debugf("Input reader done.")
+	}()
+
+	dreitafel.CompileToSvgToStdout(lines)
 }

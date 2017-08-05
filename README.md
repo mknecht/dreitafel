@@ -1,19 +1,66 @@
 # Dreitafel
-Discussing software architecture, made simple
+Dreitafel helps you document and discuss the architecture and design of your software.
+
+This is how you could model the basics of a webserver serving static files:
+
+```
+[ Browser ] --o-- [ Webserver ] <- ( static files )
+```
+
+The language used is a text version of the Block Diagrams of the [Fundamental Modeling Concepts (FMC)](http://fmc-modeling.org/),
+
+FMC is not restricted to software. 
+It really is about *systems*.
+Have a look at this example of how we could model an oven:
+
+```
+(Wood) -> [Oven] -> (Heat)
+```
+
+What FMC *is* made for is communication.
+
+It's meant for you and me to talk about how an oven works.
+Or a compiler.
+Or a database system.
+Or a car.
+
+Wait, what do we need Dreitafel for?
+To make things look beautiful:
+
+![You put wood and get heat: The basics of an oven :)](examples/oven.png)
+
+Dreitafel will comprise of…
+
+- [x] a **compiler** from a text DSL to graphviz dot.
+- [ ] a **viewer** of Markdown documents. These may include  Dreitafel source code, which is then replaced by images
+- [ ] a **paste-bin and playground** for diagrams
 
 ## Trying it
 
-Convert a diagram to dot:
+You need Docker installed for the simple version to work.
+
+Check out the repository and convert a text diagram to PNG:
 
 ```
-./try.sh "[Engine] (Gasoline) (Oil)"
+./try.sh "(Wood) -> [Oven] -> (Heat)" cozy.png
 ```
 
-Convert dot to an image:
+Or, manually:
 
 ```
-dot -Tpng testground/simple.dot > testground/simple.png
+make dreitafel
+
+echo '(Wood) -> [Oven] -> (Heat)' | ./dreitafel | dot -Tpng > cozy.png
 ```
+
+## The Current Architecture of Dreitafel
+
+In its first stage, Dreitafel is a compiler from FMC source code to graphviz' dot. 
+The latter is then used to generate the actual image.
+
+The following diagram illustrates this (generated with Dreitafel and graphviz of course):
+
+![Integration of dreitafel with graphviz](examples/dreitafel.png)
 
 ## The (Planned) Architecture of Dreitafel
 
@@ -66,7 +113,7 @@ Then, the **Parser** reads the diagram elements recognized by the Lexer.
 It's job is to assemble a valid diagram from the individual parts.
 
 ```dreitafel:fmcblock
-( AST element ) -> [ Parser ] -> ( Diagram )      -> [ Dot Generator ]
+( AST element ) -> [ Parser ] -> ( Diagram )              -> [ Dot Generator ]
                               -> ( Invalid AST Elements ) -> [ ErrorHandler ]
 ```
 
@@ -82,6 +129,7 @@ Example of errors:
 
 The **Dot Generator** takes the valid FMC block diagram model,
 and produces a dot graph representing the FMC diagram.
+
 
 ## The road ahead
 
@@ -140,3 +188,14 @@ To remember where I left off:
   * Zooming: Step “into” an element to view its details.
   * Printable version
   * Simple flow diagrams, too.
+
+## Commands to remember:
+
+
+```
+# Convert dot to a PNG:
+dot -Tpng simple.dot > simple.png
+# Convert dot to a SVG:
+dot -Tsvg simple.dot > simple.svg
+```
+

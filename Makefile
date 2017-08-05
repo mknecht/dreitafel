@@ -9,7 +9,7 @@ deps:
 build:
 	$(INDOCKER) go build
 
-dreitafel: *.go
+dreitafel: *.go cmd/*.go
 	$(INDOCKER) go build -o dreitafel cmd/main.go
 
 .PHONY: examples
