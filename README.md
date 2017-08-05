@@ -1,39 +1,19 @@
 # Dreitafel
 Dreitafel helps you document and discuss the architecture and design of your software.
 
-This is how you could model the basics of a webserver serving static files:
+At its core, Dreitafel is a modeling language plus some tools, such as a compiler.
+**Or will be, when it's done.**
+
+For example, this is how you could model `grep`:
 
 ```
-[Browser] --o-- [Webserver] <- (static files)
+(textLines) -> [grep] -> (matches)
 ```
 
-The language used is a text version of the Block Diagrams of the [Fundamental Modeling Concepts (FMC)](http://fmc-modeling.org/),
+Dreitafel turns this text-based diagram into an image:
 
-FMC is not restricted to software. 
-It really is about *systems*.
-Have a look at this example of how we could model an oven:
+![grep searches text lines for matches](examples/grep.png)
 
-```
-(Wood) -> [Oven] -> (Heat)
-```
-
-What FMC *is* made for is communication.
-
-It's meant for you and me to talk about how an oven works.
-Or a compiler.
-Or a database system.
-Or a car.
-
-Wait, what do we need Dreitafel for?
-To make things look beautiful:
-
-![You put wood and get heat: The basics of an oven :)](examples/oven.png)
-
-Dreitafel will comprise of…
-
-- [x] a **compiler** from a text DSL to graphviz dot.
-- [ ] a **viewer** of Markdown documents. These may include  Dreitafel source code, which is then replaced by images
-- [ ] a **paste-bin and playground** for diagrams
 
 ## Trying it
 
@@ -52,6 +32,52 @@ make dreitafel
 
 echo '(Wood) -> [Oven] -> (Heat)' | ./dreitafel | dot -Tpng > cozy.png
 ```
+
+## Why Dreitafel?
+
+To my mind, one of the major contributions to documentation in open-source projects
+was GitHub's READMEs. Many projects are documented purely in this single file,
+relying on the browser search for nagivation. And it works.
+
+It works, because those Markdown files are *simple* and *easy to change*.
+
+Modeling software using diagrams should be simple and easy to change, too.
+To do that, Dreitafel relies an existing modeling language,
+namely the Block Diagrams of the [Fundamental Modeling Concepts (FMC)](http://fmc-modeling.org/).
+
+FMC is not restricted to software, though.
+It really is about *modeling systems*.
+Have a look at this example of how we could model an oven:
+ 
+ ```
+(Wood) -> [Oven] -> (Heat)
+ ```
+ 
+What FMC *is* made for is communication.
+
+It's meant for you and me to talk about how an oven works.
+Or a compiler.
+Or a database system.
+Or a cloud deployment.
+
+Wait, what do we need Dreitafel for again?
+To make things look beautiful:
+
+![You put wood and get heat: The basics of an oven :)](examples/oven.png)
+
+The technology accessible to most people is text.
+Dreitafel defines a text-based version of FMC Block Diagrams.
+ 
+Additionally, Dreitafel comprise of the following tools…
+ 
+- [x] a **compiler** from a text DSL to graphviz dot.
+- [ ] a **viewer of GitHub hosted Dreitafel source code**: You put your diagram source in a textfile on GitHub, 
+      and in your README link an image to the viewer. Whenever you change the textfile, the image will automatically
+      by updated.
+- [ ] a **paste-bin and playground** for diagrams
+- [ ] a **viewer of Markdown documents**. These may include Dreitafel source code, which is then replaced by images
+
+Eventually, it would be great to get Jekyll and Sphinx support. The viewers would then be somewhat superfluous.
 
 ## The Current Architecture of Dreitafel
 
