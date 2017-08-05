@@ -41,6 +41,7 @@ func (diagram *FmcBlockDiagram) GenerateDot() {
 	print("rankdir=LR;")
 	print("splines=ortho;")
 	print("nodesep=0.8;")
+	print("arrowhead=vee")
 
 	print("")
 	print(`# Actors`)
@@ -64,10 +65,10 @@ func (diagram *FmcBlockDiagram) GenerateDot() {
 
 		if edge.edgeType == EdgeTypeRead {
 			log.Debug("Adding read access!")
-			edgestr = fmt.Sprintf("%v -> %v;", edge.storage.title, edge.actor.title)
+			edgestr = fmt.Sprintf("%v -> %v [arrowhead=vee];", edge.storage.title, edge.actor.title)
 		} else {
 			log.Debug("Adding write access!")
-			edgestr = fmt.Sprintf("%v -> %v;", edge.actor.title, edge.storage.title)
+			edgestr = fmt.Sprintf("%v -> %v  [arrowhead=vee];", edge.actor.title, edge.storage.title)
 		}
 
 		print(edgestr)

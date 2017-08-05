@@ -4,7 +4,7 @@ Dreitafel helps you document and discuss the architecture and design of your sof
 This is how you could model the basics of a webserver serving static files:
 
 ```
-[ Browser ] --o-- [ Webserver ] <- ( static files )
+[Browser] --o-- [Webserver] <- (static files)
 ```
 
 The language used is a text version of the Block Diagrams of the [Fundamental Modeling Concepts (FMC)](http://fmc-modeling.org/),
