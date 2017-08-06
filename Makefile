@@ -2,16 +2,21 @@
 
 INDOCKER:=docker run -it --rm -v "${GOPATH}":/go -v "${PWD}":/go/src/dreitafel -w /go/src/dreitafel golang
 
-.PHONY: build
+.PHONY: all
+all: dreitafel dreitafel-web
+
 deps:
 	$(INDOCKER) go get
-
-build:
-	$(INDOCKER) go build
 
 dreitafel: *.go cmd/*.go
 	$(INDOCKER) go build -o dreitafel cmd/main.go
 
+dreitafel-web: *.go web/*.go cmd/*.go
+	$(INDOCKER) go build -o dreitafel-web cmd/web.go
+
 .PHONY: examples
 examples: dreitafel
 	(cd examples && ./generate.sh)
+
+clean:
+	rm -f dreitafel dreitafel-web

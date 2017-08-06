@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"reflect"
 	"regexp"
-	"sync"
 
 	log "github.com/Sirupsen/logrus"
 )
@@ -28,9 +27,7 @@ type Lexer struct {
 	unrecognized chan<- error
 }
 
-func KeepParsing(lines <-chan *string, diagrams chan<- *FmcBlockDiagram, errorsChan chan<- error, waitGroup *sync.WaitGroup) {
-
-	defer waitGroup.Done()
+func KeepParsing(lines <-chan *string, diagrams chan<- *FmcBlockDiagram, errorsChan chan<- error) {
 
 	tokens := make(chan Token)
 

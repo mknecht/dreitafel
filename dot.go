@@ -13,35 +13,37 @@ var header = `# Generated with Dreitafel
 `
 
 type DotGenerator interface {
-	GenerateDot()
+	GenerateDot(print func(txt string))
 }
 
-func GenerateDot(diagrams chan DotGenerator, errors chan error, waitGroup *sync.WaitGroup) {
-	defer waitGroup.Done()
+func GenerateDot(diagrams chan DotGenerator, dot chan *string, errors chan error, wg *sync.WaitGroup) {
+	defer close(dot)
+	defer wg.Done()
+
+	print := func(txt string) {
+		dot <- &txt
+	}
 
 	for diagram := range diagrams {
 		if diagram == nil {
 			continue
 		}
 		log.Debugf("Got diagram: %v", diagram)
-		diagram.GenerateDot()
+		diagram.GenerateDot(print)
 		log.Debugf("Done generating diagram: %v", diagram)
 	}
 	log.Debug("Done generating diagrams")
 }
 
-func (diagram *FmcBlockDiagram) GenerateDot() {
-	print := func(txt string) {
-		fmt.Printf("        %v\n", txt)
-	}
-	fmt.Println(header)
-	fmt.Printf("digraph \"%v\" {\n", diagram.title)
+func (diagram *FmcBlockDiagram) GenerateDot(print func(txt string)) {
+	print(header)
+	print(fmt.Sprintf("digraph \"%v\" {", diagram.title))
 	print(``)
 	print(`# horizontal layout`)
 	print("rankdir=LR;")
 	print("splines=ortho;")
 	print("nodesep=0.8;")
-	print("arrowhead=vee")
+	print("arrowhead=vee;")
 
 	print("")
 	print(`# Actors`)
@@ -73,5 +75,5 @@ func (diagram *FmcBlockDiagram) GenerateDot() {
 
 		print(edgestr)
 	}
-	fmt.Printf("} // end digraph\n")
+	print("} // end digraph\n")
 }

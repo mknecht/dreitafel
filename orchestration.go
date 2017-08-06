@@ -1,37 +1,21 @@
 package dreitafel
 
-import (
-	"fmt"
-	"os"
-	"sync"
+import "sync"
 
-	log "github.com/Sirupsen/logrus"
-)
-
-func CompileToSvgToStdout(lines chan *string) {
+func CompileFmcBlockDiagramToDot(fmcSrcLines chan *string, dotSrcLines chan *string, errors chan error) {
 	fmcdiagrams := make(chan *FmcBlockDiagram)
 	dotdiagrams := make(chan DotGenerator)
-	errors := make(chan error, 500) // errors are independent
 
-	var waitGroup sync.WaitGroup
+	var wg sync.WaitGroup
 
-	waitGroup.Add(1)
-	go KeepParsing(lines, fmcdiagrams, errors, &waitGroup)
+	go KeepParsing(fmcSrcLines, fmcdiagrams, errors)
 	go forwardFmcToDot(fmcdiagrams, dotdiagrams)
+	wg.Add(1)
+	go GenerateDot(dotdiagrams, dotSrcLines, errors, &wg)
 
-	waitGroup.Add(1)
-	go GenerateDot(dotdiagrams, errors, &waitGroup)
-
-	go printUntilNil(errors, &waitGroup)
-
-	log.Debug("waiting for parser and diagram builder.")
-	waitGroup.Wait()
-	log.Debug("Compilation done.")
-
-	log.Debug("error handler to finish.")
-	waitGroup.Add(1)
+	wg.Wait()
 	close(errors)
-	waitGroup.Wait()
+
 }
 
 func forwardFmcToDot(in chan *FmcBlockDiagram, out chan DotGenerator) {
@@ -45,12 +29,4 @@ func forwardFmcToDot(in chan *FmcBlockDiagram, out chan DotGenerator) {
 		out <- fmcdiagram
 	}
 	close(out)
-}
-
-func printUntilNil(errors <-chan error, waitGroup *sync.WaitGroup) {
-	for err := range errors {
-		fmt.Fprintf(os.Stderr, "%v\n", err)
-	}
-
-	waitGroup.Done()
 }

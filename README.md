@@ -1,8 +1,10 @@
 # Dreitafel
+**Heads up, this is still very much in development (2017-Aug-06)**, the compiler works for veeeeery simple diagrams, but that's it. See you in a month for something useful. :)
+
 Dreitafel helps you document and discuss the architecture and design of your software.
 
 At its core, Dreitafel is a modeling language plus some tools, such as a compiler.
-**Or will be, when it's done.**
+
 
 For example, this is how you could model `grep`:
 
@@ -71,6 +73,7 @@ Dreitafel defines a text-based version of FMC Block Diagrams.
 Additionally, Dreitafel comprise of the following tools…
  
 - [x] a **compiler** from a text DSL to graphviz dot.
+- [ ] a **web-version of the compiler** so you can send text and get back an image
 - [ ] a **viewer of GitHub hosted Dreitafel source code**: You put your diagram source in a textfile on GitHub, 
       and in your README link an image to the viewer. Whenever you change the textfile, the image will automatically
       by updated.
@@ -163,7 +166,12 @@ and produces a dot graph representing the FMC diagram.
 
 To remember where I left off:
 
-* Write some simple system tests
+* server.compileFmcBlockDiagramFromQueryString():
+  * [ ] input validation
+  * [ ] support output formats: `dot`, `png`, `svg`
+  * [ ] cache headers: 1 day
+  * [ ] debug view with fmc source, dot source, output and compile errors at `/debug`
+* server.index(): proper index page
 
 ### Roadmap
 
@@ -173,15 +181,17 @@ To remember where I left off:
     * [X] Storage
     * [X] Actor reads to Storage
     * [X] Actor writes to Storage.
-  * [X] Compiler for FMC block diagram text-syntax to graphviz' dot.
-  * [ ] Compiler GH-flavored markdown with FMC block diagrams to HTML.
-  * [ ] Webapp live-rendering this README.
+  * [X] Compiler for Dreitafel text-syntax to graphviz' dot.
+  * [ ] web-version of the compiler
+  * [ ] viewer for GH-hosted Dreitafel source files
   * [ ] Deploy this service on a host.
 * Publish
   * Add diagram elements and statements.
     * [ ] modifying access
     * [ ] unidirectional channel
     * [ ] bidirectional channel
+  * [ ] Compiler GH-flavored markdown with FMC block diagrams to HTML.
+  * [ ] Webapp live-rendering this README.
   * [ ] Create FMC syntax guide, as documentation, and eat-your-own-dogfood.
   * [ ] Logo! (Of course)
 * 1.0
@@ -213,7 +223,7 @@ To remember where I left off:
   * Layout hints
   * Zooming: Step “into” an element to view its details.
   * Printable version
-  * Simple flow diagrams, too.
+  * More than block diagrams, maybe simple flow diagrams, too.
 
 ## Commands to remember:
 
