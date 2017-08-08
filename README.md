@@ -35,6 +35,14 @@ make dreitafel
 echo '(Wood) -> [Oven] -> (Heat)' | ./dreitafel | dot -Tpng > cozy.png
 ```
 
+Even more alpha is the webcompiler. Run it with this command:
+
+```
+make dreitafel-web && ./dreitafel-web
+```
+
+and then visit [this url](http://localhost:8080/fmc/?format=svg&diagram=(staticFiles)%20-%3E%20[NGINX]%20----%3E%20(logFiles)) to see the SVG for `(staticFiles) -> [NGINX] ----> (logFiles)`
+
 ## Why Dreitafel?
 
 To my mind, one of the major contributions to documentation in open-source projects
@@ -168,7 +176,8 @@ To remember where I left off:
 
 * server.compileFmcBlockDiagramFromQueryString():
   * [ ] input validation
-  * [ ] support output formats: `dot`, `png`, `svg`
+  * [ ] error handling. of course.
+    * [ ] handle dot-command not being there
   * [ ] cache headers: 1 day
   * [ ] debug view with fmc source, dot source, output and compile errors at `/debug`
 * server.index(): proper index page
