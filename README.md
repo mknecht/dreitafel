@@ -58,11 +58,11 @@ namely the Block Diagrams of the [Fundamental Modeling Concepts (FMC)](http://fm
 FMC is not restricted to software, though.
 It really is about *modeling systems*.
 Have a look at this example of how we could model an oven:
- 
+
  ```
 (Wood) -> [Oven] -> (Heat)
  ```
- 
+
 What FMC *is* made for is communication.
 
 It's meant for you and me to talk about how an oven works.
@@ -77,12 +77,12 @@ To make things look beautiful:
 
 The technology accessible to most people is text.
 Dreitafel defines a text-based version of FMC Block Diagrams.
- 
+
 Additionally, Dreitafel comprise of the following tools…
- 
+
 - [x] a **compiler** from a text DSL to graphviz dot.
 - [ ] a **web-version of the compiler** so you can send text and get back an image
-- [ ] a **viewer of GitHub hosted Dreitafel source code**: You put your diagram source in a textfile on GitHub, 
+- [ ] a **viewer of GitHub hosted Dreitafel source code**: You put your diagram source in a textfile on GitHub,
       and in your README link an image to the viewer. Whenever you change the textfile, the image will automatically
       by updated.
 - [ ] a **paste-bin and playground** for diagrams
@@ -92,7 +92,7 @@ Eventually, it would be great to get Jekyll and Sphinx support. The viewers woul
 
 ## The Current Architecture of Dreitafel
 
-In its first stage, Dreitafel is a compiler from FMC source code to graphviz' dot. 
+In its first stage, Dreitafel is a compiler from FMC source code to graphviz' dot.
 The latter is then used to generate the actual image.
 
 The following diagram illustrates this (generated with Dreitafel and graphviz of course):
@@ -175,7 +175,6 @@ and produces a dot graph representing the FMC diagram.
 To remember where I left off:
 
 * server.compileFmcBlockDiagramFromQueryString():
-  * [ ] input validation
   * [ ] error handling. of course.
     * [ ] handle dot-command not being there
   * [ ] cache headers: 1 day
@@ -191,15 +190,18 @@ To remember where I left off:
     * [X] Actor reads to Storage
     * [X] Actor writes to Storage.
   * [X] Compiler for Dreitafel text-syntax to graphviz' dot.
-  * [ ] web-version of the compiler
+  * [x] web-version of the compiler
   * [ ] viewer for GH-hosted Dreitafel source files
-  * [ ] Deploy this service on a host.
+  * [ ] Deploy view.dreitafel.org/fmc-blocks/
+  * [ ] Deploy try.dreitafel.org
 * Publish
   * Add diagram elements and statements.
     * [ ] modifying access
     * [ ] unidirectional channel
     * [ ] bidirectional channel
   * [ ] Compiler GH-flavored markdown with FMC block diagrams to HTML.
+  * [ ] Deploy www.dreitafel.org
+  * [ ] Deploy view.dreitafel.org/md/
   * [ ] Webapp live-rendering this README.
   * [ ] Create FMC syntax guide, as documentation, and eat-your-own-dogfood.
   * [ ] Logo! (Of course)
@@ -209,7 +211,7 @@ To remember where I left off:
   * [ ] Beautiful titles, with spaces, all kinds of characters.
   * [ ] Syntax: Comments
   * [ ] Create badge. :)
-  * [ ] Build & deploy gist/jsfiddle/play equivalent.
+  * [x] Build & deploy gist/jsfiddle/play equivalent.
   * [ ] Human Actor
   * [ ] Support for IDs to centralize common attributes when an element re-occurs
   * [ ] multi-line elements
@@ -243,4 +245,3 @@ dot -Tpng simple.dot > simple.png
 # Convert dot to a SVG:
 dot -Tsvg simple.dot > simple.svg
 ```
-

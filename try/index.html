@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Try: Dreitafel</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+        <style>
+
+        /* excerpts from normalize.css v4.1.1 | MIT License | github.com/necolas/normalize.css */
+
+        /**
+         * 1. Change the default font family in all browsers (opinionated).
+         * 2. Prevent adjustments of font size after orientation changes in IE and iOS.
+         */
+
+        html {
+            font-family: sans-serif; /* 1 */
+            -ms-text-size-adjust: 100%; /* 2 */
+            -webkit-text-size-adjust: 100%; /* 2 */
+        }
+
+        /**
+         * Remove the margin in all browsers (opinionated).
+         */
+
+        body {
+            margin: 0;
+        }
+
+        /**
+         * Add the correct display in IE 9-.
+         * 1. Add the correct display in Edge, IE, and Firefox.
+         * 2. Add the correct display in IE.
+         */
+        aside,
+        main, /* 2 */
+        menu,
+        nav,
+        section,
+        summary { /* 1 */
+            display: block;
+        }
+
+        /**
+         * Remove the outline on focused links when they are also active or hovered
+         * in all browsers (opinionated).
+         */
+
+        a:active,
+        a:hover {
+            outline-width: 0;
+        }
+
+        /**
+         * Add the correct font size in all browsers.
+         */
+
+        small {
+            font-size: 80%;
+        }
+        /**
+         * 1. Change font properties to `inherit` in all browsers (opinionated).
+         * 2. Remove the margin in Firefox and Safari.
+         */
+
+        button,
+        input,
+        select,
+        textarea {
+            font: inherit; /* 1 */
+            margin: 0; /* 2 */
+        }
+        /**
+         * Remove the inheritance of text transform in Edge, Firefox, and IE.
+         * 1. Remove the inheritance of text transform in Firefox.
+         */
+
+        button,
+        select { /* 1 */
+            text-transform: none;
+        }
+        /**
+         * 1. Correct the inability to style clickable types in iOS and Safari.
+         * 2. Change font properties to `inherit` in Safari.
+         */
+
+        ::-webkit-file-upload-button {
+            -webkit-appearance: button; /* 1 */
+            font: inherit; /* 2 */
+        }
+
+        /**************************
+           custom */
+
+        body {
+            padding: 1em;
+        }
+
+        a {
+
+        }
+
+        a:hover {
+            text-decoration: none;
+        }
+        </style>
+
+        <script>
+
+        // TODO replace this with view.dreitafel.org
+        var viewerUrl = "http://localhost:8080"
+
+        function renderDiagram() {
+          var imageUrl = viewerUrl + "/fmc/?format=svg&diagram=" + encodeURIComponent(document.getElementById('textarea-src').value)
+          document.getElementById('img-output').src = imageUrl
+          document.getElementById('span-link').textContent = imageUrl
+          return false
+        }
+
+        function handleKeypress(e) {
+          var k = e.keyCode || e.which
+          if (k == 10 && e.ctrlKey) {
+            renderDiagram()
+          }
+          return false
+        }
+
+        function exEngine() {
+          document.getElementById('textarea-src').value = (
+            '(Gasoline) -> [Engine] -> (TurningWheels)\n\n'
+            + '(Oil) -> [Engine]'
+          )
+          renderDiagram()
+        }
+        function exDreitafel() {
+          document.getElementById('textarea-src').value = (
+            '(FmcBlockSource) -> [Dreitafel] -> (SvgDiagram)\n\n'
+          )
+            renderDiagram()
+        }
+        </script>
+    </head>
+    <body onload="exDreitafel()">
+        <header role="banner">
+            <nav role="navigation">
+                <span><a href="http://www.dreitafel.org">Project home</a></span> |
+                <span><a href="https://www.github.com/mknecht/dreitafel/">Github</a></span>
+            </nav>
+
+            <h1>try: Dreitafel</h1>
+        </header>
+
+        <main>
+            <div style="padding:1em 0em">
+                <a href="" onclick="exDreitafel(); return false">Example: Dreitafel</a> |
+                <a href="" onclick="exEngine(); return false">Example: Engine</a>
+            </div>
+            <textarea id="textarea-src" style="float:left;width:40%; height:10em;" onkeypress="handleKeypress(event)"></textarea>
+
+            <div style="float:left; margin-left:1em;">
+                <img id="img-output"/>
+            </div>
+            <div style="clear:both; padding:1em 0em;">
+                <button onclick="renderDiagram()">Render</button>
+                (or hit Ctrl-Return)
+            </div>
+            <div style="padding-top:1em;">
+                <p>Link to copy:</p>
+                <p><span id="span-link" style="background-color: lightgray; padding:0.5em;"></span></p>
+            </div>
+        </main>
+
+        <aside>
+            <h2>Help tips</h2>
+            <ul>
+                <li>Errors are not yet displayed</li>
+                <li>Titles cannot have a space or any non-ASCII char.</li>
+                <li>Two elements with the same name are assumed to be the same.</li>
+            </ul>
+        </aside>
+
+    </body>
+</html>
