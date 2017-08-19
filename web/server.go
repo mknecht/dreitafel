@@ -13,11 +13,27 @@ import (
 	"sync"
 )
 
+var responseFormats = map[string]string{
+	"dot": "text/dot",
+	"png": "image/png",
+	"svg": "image/svg+xml",
+}
+
+var validFormats []string
+
 func index(w http.ResponseWriter, r *http.Request) {
 	txt := `
-<p>Welcome to <a href="https://github.com/mknecht/dreitafel">Dreitafel</a>!</p>
+<p>Welcome to <a href="https://github.com/mknecht/dreitafel">Dreitafel</a> viewer!</p>
 
-<p>Try this: <a href="/fmc/q?format=png&diagram=%5BActor%5D%20-%3E%20%28Storage%29</p>
+<p>See this example:</p>
+
+<pre>[Actor] -&gt; (Storage)</pre>
+
+<p>A diagram can be generated dynamically using this URL: /fmc/?format=svg&diagram=[Actor]->(Storage)</p>
+
+<p>And here's the diagram:</p>
+
+<p><img src="/fmc/?format=svg&diagram=[Actor]->(Storage)"/></p>
 
 `
 	fmt.Fprintf(w, txt)
@@ -25,7 +41,25 @@ func index(w http.ResponseWriter, r *http.Request) {
 
 func compileFmcBlockDiagramFromQueryString(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
-	// TODO input validation & error handling :]
+
+	if len(r.Form["format"]) == 0 {
+		http.Error(w, fmt.Sprintf("Need 'format' query param. Supported formats are: %v", validFormats), http.StatusBadRequest)
+		return
+	}
+	format := r.Form["format"][len(r.Form["format"])-1]
+
+	contentType, ok := responseFormats[format]
+	if !ok {
+		http.Error(w, fmt.Sprintf("Supported values for 'format' param are: %v", validFormats), http.StatusBadRequest)
+		return
+	}
+
+	if len(r.Form["diagram"]) == 0 {
+		http.Error(w, "Need 'diagram' query param with Dreitafel source code", http.StatusBadRequest)
+		return
+	}
+	diagram := r.Form["diagram"][len(r.Form["diagram"])-1]
+
 	fmcSrcLines := make(chan *string) // lines are independent; statements don't span lines yet
 
 	dotSrcLines := make(chan *string, 500)
@@ -35,17 +69,14 @@ func compileFmcBlockDiagramFromQueryString(w http.ResponseWriter, r *http.Reques
 
 	go dreitafel.CompileFmcBlockDiagramToDot(fmcSrcLines, dotSrcLines, errors)
 
-	if r.Form["format"][0] == "png" {
-		w.Header().Add("Content-Type", "image/png")
-		writeDotGeneratedImage("png", w, dotSrcLines, errors, &wg)
-	} else if r.Form["format"][0] == "svg" {
-		w.Header().Add("Content-Type", "image/svg+xml")
-		writeDotGeneratedImage("svg", w, dotSrcLines, errors, &wg)
-	} else {
+	w.Header().Add("Content-Type", contentType)
+	if format == "dot" {
 		writeDotSrcLines(w, dotSrcLines, errors, &wg)
+	} else {
+		writeDotGeneratedImage(format, w, dotSrcLines, errors, &wg)
 	}
 
-	fmcSrcLines <- &r.Form["diagram"][0]
+	fmcSrcLines <- &diagram
 	close(fmcSrcLines)
 
 	wg.Wait()
@@ -144,6 +175,13 @@ func writeDotGeneratedImage(format string, w io.Writer, dotSrcLines chan *string
 }
 
 func ListenAndServe() {
+	validFormats = make([]string, len(responseFormats))
+	i := 0
+	for key, _ := range responseFormats {
+		validFormats[i] = key
+		i += 1
+	}
+
 	http.HandleFunc("/fmc/", compileFmcBlockDiagramFromQueryString)
 	http.HandleFunc("/", index)
 	http.ListenAndServe(":8080", nil)
