@@ -20,3 +20,8 @@ examples: dreitafel
 
 clean:
 	rm -f dreitafel dreitafel-web
+
+docker-image-latest:
+	cp dreitafel docker/
+	cp dreitafel-web docker/
+	docker build -t muratk/dreitafel:latest docker/

@@ -1,5 +1,5 @@
 # Dreitafel
-**Heads up, this is still very much in development (2017-Aug-06)**, the compiler works for veeeeery simple diagrams, but that's it. See you in a month for something useful. :)
+**Heads up, this is still very much in development (2017-Aug-21)**, the compiler works for veeeeery simple diagrams, but that's it. See you in a month for something useful. :)
 
 Dreitafel helps you document and discuss the architecture and design of your software.
 
@@ -27,6 +27,14 @@ Check out the repository and convert a text diagram to PNG:
 ./try.sh "(Wood) -> [Oven] -> (Heat)" cozy.png
 ```
 
+Or, with docker:
+
+```
+echo "(Wood) -> [Oven] -> (Heat)" | docker run -i --rm muratk/dreitafel /usr/bin/dreitafel 2>/dev/null | docker run -i --rm markfletcher/graphviz dot -Tsvg >cozy.svg
+```
+
+(For some reason, the characters get lost when piping them between the docker containers.)
+
 Or, manually:
 
 ```
@@ -35,7 +43,7 @@ make dreitafel
 echo '(Wood) -> [Oven] -> (Heat)' | ./dreitafel | dot -Tpng > cozy.png
 ```
 
-Even more alpha is the webcompiler. Run it with this command:
+The webcompiler you can run like so:
 
 ```
 make dreitafel-web && ./dreitafel-web
@@ -81,11 +89,12 @@ Dreitafel defines a text-based version of FMC Block Diagrams.
 Additionally, Dreitafel comprise of the following tools…
 
 - [x] a **compiler** from a text DSL to graphviz dot.
-- [ ] a **web-version of the compiler** so you can send text and get back an image
+- [x] a **web-version of the compiler** so you can send text and get back an image
 - [ ] a **viewer of GitHub hosted Dreitafel source code**: You put your diagram source in a textfile on GitHub,
       and in your README link an image to the viewer. Whenever you change the textfile, the image will automatically
       by updated.
-- [ ] a **paste-bin and playground** for diagrams
+- [x] a **playground** for diagrams
+- [ ] a **paste-bin** for diagrams
 - [ ] a **viewer of Markdown documents**. These may include Dreitafel source code, which is then replaced by images
 
 Eventually, it would be great to get Jekyll and Sphinx support. The viewers would then be somewhat superfluous.
@@ -193,7 +202,7 @@ To remember where I left off:
   * [x] web-version of the compiler
   * [ ] viewer for GH-hosted Dreitafel source files
   * [ ] Deploy view.dreitafel.org/fmc-blocks/
-  * [ ] Deploy try.dreitafel.org
+  * [x] Deploy try.dreitafel.org
 * Publish
   * Add diagram elements and statements.
     * [ ] modifying access
@@ -204,6 +213,9 @@ To remember where I left off:
   * [ ] Deploy view.dreitafel.org/md/
   * [ ] Webapp live-rendering this README.
   * [ ] Create FMC syntax guide, as documentation, and eat-your-own-dogfood.
+  * [ ] CLI documentation
+  * [x] Docker image with binaries
+  * [ ] Documentation for Docker image
   * [ ] Logo! (Of course)
 * 1.0
   * [ ] CLI <3 — i/o with files/stdin/stdout, proper config
