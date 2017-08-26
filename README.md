@@ -17,7 +17,7 @@ Dreitafel turns this text-based diagram into an image:
 ![grep searches text lines for matches](examples/grep.png)
 
 
-## Trying it
+## Try it
 
 Head over to [try.dreitafel.org](http://try.dreitafel.org/)
 
@@ -25,6 +25,7 @@ Head over to [try.dreitafel.org](http://try.dreitafel.org/)
 ### Trying locally
 
 You need Docker installed for the simple version to work.
+The Docker image is this one: [muratk/dreitafel](https://hub.docker.com/r/muratk/dreitafel/).
 
 Check out the repository and convert a text diagram to PNG:
 
