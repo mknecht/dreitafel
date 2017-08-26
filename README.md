@@ -1,5 +1,5 @@
 # Dreitafel
-**Heads up, this is still very much in development (2017-Aug-21)**, the compiler works for veeeeery simple diagrams, but that's it. See you in a month for something useful. :)
+**Heads up, this is still very much in development (2017-Aug-26)**, the compiler works for veeeeery simple diagrams, [try.dreitafel.org](http://try.dreitafel.org/) and [view.dreitafel.org](http://view.dreitafel.org/) are there, but that's it. See you in a month for something useful. :)
 
 Dreitafel helps you document and discuss the architecture and design of your software.
 
