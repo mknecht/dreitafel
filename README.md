@@ -19,6 +19,11 @@ Dreitafel turns this text-based diagram into an image:
 
 ## Trying it
 
+Head over to [try.dreitafel.org](http://try.dreitafel.org/)
+
+
+### Trying locally
+
 You need Docker installed for the simple version to work.
 
 Check out the repository and convert a text diagram to PNG:
@@ -30,10 +35,10 @@ Check out the repository and convert a text diagram to PNG:
 Or, with docker:
 
 ```
-echo "(Wood) -> [Oven] -> (Heat)" | docker run -i --rm muratk/dreitafel /usr/bin/dreitafel 2>/dev/null | docker run -i --rm markfletcher/graphviz dot -Tsvg >cozy.svg
+echo "(Wood) -> [Oven] -> (Heat)" | docker run -i --rm muratk/dreitafel sh -c "/usr/bin/dreitafel 2>/dev/null | dot -Tsvg" >cozy.svg
 ```
 
-(For some reason, the characters get lost when piping them between the docker containers.)
+(For some reason, for the PNG version the characters get lost when piping them between Dreitafel and dot.)
 
 Or, manually:
 
@@ -89,15 +94,24 @@ Dreitafel defines a text-based version of FMC Block Diagrams.
 Additionally, Dreitafel comprise of the following tools…
 
 - [x] a **compiler** from a text DSL to graphviz dot.
-- [x] a **web-version of the compiler** so you can send text and get back an image
+- [x] a **web-version of the compiler** so you can send text and get back an image, see http://view.dreitafel.org
 - [ ] a **viewer of GitHub hosted Dreitafel source code**: You put your diagram source in a textfile on GitHub,
       and in your README link an image to the viewer. Whenever you change the textfile, the image will automatically
       by updated.
-- [x] a **playground** for diagrams
+- [x] a **playground** for diagrams at http://try.dreitafel.org
 - [ ] a **paste-bin** for diagrams
 - [ ] a **viewer of Markdown documents**. These may include Dreitafel source code, which is then replaced by images
 
 Eventually, it would be great to get Jekyll and Sphinx support. The viewers would then be somewhat superfluous.
+
+### Related projects
+
+* [PlantUML](http://plantuml.com/) renders text-based UML diagrams.
+  There are [tons of plugins](http://plantuml.com/running) so if UML
+  is what you want, your search may be at an end.
+* [esimov/diagram](https://github.com/esimov/diagram) is a “CLI app to convert ascii arts into hand drawn diagrams”. Love the idea, it's one of the later features
+  I'd like to see for FMC block diagrams, because they're *designed*
+  to be hand-drawn.
 
 ## The Current Architecture of Dreitafel
 
@@ -183,12 +197,9 @@ and produces a dot graph representing the FMC diagram.
 
 To remember where I left off:
 
-* server.compileFmcBlockDiagramFromQueryString():
-  * [ ] error handling. of course.
-    * [ ] handle dot-command not being there
-  * [ ] cache headers: 1 day
-  * [ ] debug view with fmc source, dot source, output and compile errors at `/debug`
-* server.index(): proper index page
+* debug view with fmc source, dot source, output and compile errors at `/debug`
+* errors for try.dreitafel.org
+* Make sure “block” diagram is part of the url, for example view.dreitafel.org/fmc-blocks/, so that other FMC parts can be added
 
 ### Roadmap
 
@@ -201,7 +212,7 @@ To remember where I left off:
   * [X] Compiler for Dreitafel text-syntax to graphviz' dot.
   * [x] web-version of the compiler
   * [ ] viewer for GH-hosted Dreitafel source files
-  * [ ] Deploy view.dreitafel.org/fmc-blocks/
+  * [x] Deploy view.dreitafel.org/fmc-blocks/
   * [x] Deploy try.dreitafel.org
 * Publish
   * Add diagram elements and statements.
@@ -209,7 +220,7 @@ To remember where I left off:
     * [ ] unidirectional channel
     * [ ] bidirectional channel
   * [ ] Compiler GH-flavored markdown with FMC block diagrams to HTML.
-  * [ ] Deploy www.dreitafel.org
+  * [x] Deploy www.dreitafel.org
   * [ ] Deploy view.dreitafel.org/md/
   * [ ] Webapp live-rendering this README.
   * [ ] Create FMC syntax guide, as documentation, and eat-your-own-dogfood.
