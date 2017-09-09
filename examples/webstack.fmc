@@ -1,0 +1,1 @@
+[Browser]--o--[nginx]--o--[Django]--o--[PostgreSQL] -> (Data)

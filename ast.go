@@ -8,6 +8,7 @@ const (
 	TokenTypeStorage
 	TokenTypeLeftAccess
 	TokenTypeRightAccess
+	TokenTypeBidirectionalChannel
 	TokenTypeLineEnd
 )
 

@@ -75,6 +75,9 @@ func (lexer *Lexer) tokenizeLine() {
 			token = lexer.acceptRightwardsAccess()
 		}
 		if token == nil {
+			token = lexer.acceptBidirectionalChannel()
+		}
+		if token == nil {
 			token = lexer.acceptLeftwardsAccess()
 		}
 		if token == nil {
@@ -113,13 +116,20 @@ func buildDiagram(tokens <-chan Token, diagrams chan<- *FmcBlockDiagram, errorsC
 			if prevToken != nil {
 				switch prevToken.GetTokenType() {
 				case TokenTypeLeftAccess, TokenTypeRightAccess:
-					edge := prevNode.(*FmcBaseEdge)
+					edge := prevNode.(*BipartiteEdge)
 					if edge.actor != nil {
 						errorsChan <- errors.New("Syntax error: Bipartite graph must connect Actor to Storage, not Actor to Actor directly.")
 						resetPrev()
 						continue
 					}
 					edge.actor = &actor
+					diagram.edges = append(diagram.edges, edge)
+
+					// other tokens before are fine:
+					// a “multiple expressions” line
+				case TokenTypeBidirectionalChannel:
+					edge := prevNode.(*Channel)
+					edge.second = &actor
 					diagram.edges = append(diagram.edges, edge)
 
 					// other tokens before are fine:
@@ -138,7 +148,7 @@ func buildDiagram(tokens <-chan Token, diagrams chan<- *FmcBlockDiagram, errorsC
 			if prevToken != nil {
 				switch prevToken.GetTokenType() {
 				case TokenTypeLeftAccess, TokenTypeRightAccess:
-					edge := prevNode.(*FmcBaseEdge)
+					edge := prevNode.(*BipartiteEdge)
 					if edge.storage != nil {
 						errorsChan <- errors.New("Syntax error: Bipartite graph must connect Actor to Storage, not Storage to Storage directly.")
 						resetPrev()
@@ -160,7 +170,7 @@ func buildDiagram(tokens <-chan Token, diagrams chan<- *FmcBlockDiagram, errorsC
 				continue
 			}
 
-			edge := FmcBaseEdge{}
+			edge := BipartiteEdge{}
 			switch prevToken.GetTokenType() {
 			case TokenTypeActor:
 				edge.actor = prevNode.(*Actor)
@@ -184,6 +194,23 @@ func buildDiagram(tokens <-chan Token, diagrams chan<- *FmcBlockDiagram, errorsC
 				setPrev(&edge, token)
 			default:
 				errorsChan <- errors.New("Syntax error: Read Access must connect Actor and Storage")
+				resetPrev()
+			}
+		case TokenTypeBidirectionalChannel:
+			if prevToken == nil {
+				errorsChan <- errors.New("Syntax error: Dangling channel")
+				resetPrev()
+				continue
+			}
+
+			edge := Channel{}
+			edge.edgeType = EdgeTypeChannel
+			switch prevToken.GetTokenType() {
+			case TokenTypeActor:
+				edge.first = prevNode.(*Actor)
+				setPrev(&edge, token)
+			default:
+				errorsChan <- errors.New("Syntax error: Channel must connect two Actors")
 				resetPrev()
 			}
 		}
@@ -275,6 +302,20 @@ func (lexer *Lexer) acceptLeftwardsAccess() Token {
 	lexer.col += len(match)
 	log.Debugf("Ate leftwards access until %v", lexer.col)
 	return &BaseToken{tokenType: TokenTypeLeftAccess, from: lexer.col - len(match), to: lexer.col}
+}
+
+func (lexer *Lexer) acceptBidirectionalChannel() Token {
+	exp := `-+o-+`
+
+	match := regexp.MustCompile(exp).FindString((*lexer.line)[lexer.col:])
+
+	if match == "" {
+		return nil
+	}
+
+	lexer.col += len(match)
+	log.Debugf("Ate bidirectional channel until %v", lexer.col)
+	return &BaseToken{tokenType: TokenTypeBidirectionalChannel, from: lexer.col - len(match), to: lexer.col}
 }
 
 func (lexer *Lexer) errorf(format string, a ...interface{}) error {

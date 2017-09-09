@@ -138,6 +138,12 @@
           )
             renderDiagram()
         }
+        function exWebStack() {
+          document.getElementById('textarea-src').value = (
+            '[Browser] --o-- [nginx] -> (logs)\n\n'
+          )
+            renderDiagram()
+        }
         </script>
     </head>
     <body onload="exDreitafel()">
@@ -153,7 +159,8 @@
         <main>
             <div style="padding:1em 0em">
                 <a href="" onclick="exDreitafel(); return false">Example: Dreitafel</a> |
-                <a href="" onclick="exEngine(); return false">Example: Engine</a>
+                <a href="" onclick="exEngine(); return false">Example: Engine</a> |
+                <a href="" onclick="exWebStack(); return false">Example: Web-stack</a>
             </div>
             <textarea id="textarea-src" style="float:left;width:40%; height:10em;" onkeypress="handleKeypress(event)"></textarea>
 

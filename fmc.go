@@ -30,16 +30,35 @@ type Storage struct {
 type EdgeType int
 
 const (
-	EdgeTypeRead EdgeType = iota
+	EdgeTypeUnknown EdgeType = iota
+	EdgeTypeRead
 	EdgeTypeWrite
+	EdgeTypeChannel
 )
 
 type FmcEdge interface {
+	GetEdgeType() EdgeType
 }
 
 // bipartite graph
 type FmcBaseEdge struct {
 	edgeType EdgeType
-	actor    *Actor
-	storage  *Storage
+}
+
+func (edge *FmcBaseEdge) GetEdgeType() EdgeType {
+	return edge.edgeType
+}
+
+// bipartite graph
+type BipartiteEdge struct {
+	FmcBaseEdge
+	actor   *Actor
+	storage *Storage
+}
+
+// channel contains a storage: actor <-> actor
+type Channel struct {
+	FmcBaseEdge
+	first  *Actor
+	second *Actor
 }

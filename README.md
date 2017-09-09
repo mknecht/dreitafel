@@ -1,5 +1,7 @@
 # Dreitafel
-**Heads up, this is still very much in development (2017-Aug-26)**, the compiler works for veeeeery simple diagrams, [try.dreitafel.org](http://try.dreitafel.org/) and [view.dreitafel.org](http://view.dreitafel.org/) are there, but that's it. See you in a month for something useful. :)
+**Heads up, this is still very much in development (2017-Sep-09)**, the compiler works for veeeeery simple diagrams, [try.dreitafel.org](http://try.dreitafel.org/) and [view.dreitafel.org](http://view.dreitafel.org/) are there, but that's it. See you in a month for something useful. :)
+
+**News: Added simple bidirectional channels to FMC Block Diagrams!**
 
 Dreitafel helps you document and discuss the architecture and design of your software.
 
@@ -219,7 +221,7 @@ To remember where I left off:
   * Add diagram elements and statements.
     * [ ] modifying access
     * [ ] unidirectional channel
-    * [ ] bidirectional channel
+    * [x] bidirectional channel
   * [ ] Compiler GH-flavored markdown with FMC block diagrams to HTML.
   * [x] Deploy www.dreitafel.org
   * [ ] Deploy view.dreitafel.org/md/
@@ -259,6 +261,10 @@ To remember where I left off:
   * Zooming: Step “into” an element to view its details.
   * Printable version
   * More than block diagrams, maybe simple flow diagrams, too.
+
+## Milestones
+
+* 2017-Sep-09 Added channels!
 
 ## Commands to remember:
 

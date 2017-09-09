@@ -61,19 +61,23 @@ func (diagram *FmcBlockDiagram) GenerateDot(print func(txt string)) {
 	}
 	print("")
 	print(`# Accesses`)
-	for _, edge_ := range diagram.edges {
-		var edgestr string
-		edge := edge_.(*FmcBaseEdge)
-
-		if edge.edgeType == EdgeTypeRead {
+	for idx, edge := range diagram.edges {
+		if edge.GetEdgeType() == EdgeTypeRead {
 			log.Debug("Adding read access!")
-			edgestr = fmt.Sprintf("%v -> %v [arrowhead=vee];", edge.storage.title, edge.actor.title)
-		} else {
+			read := edge.(*BipartiteEdge)
+			print(fmt.Sprintf("%v -> %v [arrowhead=vee];", read.storage.title, read.actor.title))
+		} else if edge.GetEdgeType() == EdgeTypeWrite {
+			write := edge.(*BipartiteEdge)
 			log.Debug("Adding write access!")
-			edgestr = fmt.Sprintf("%v -> %v  [arrowhead=vee];", edge.actor.title, edge.storage.title)
+			print(fmt.Sprintf("%v -> %v  [arrowhead=vee];", write.actor.title, write.storage.title))
+		} else if edge.GetEdgeType() == EdgeTypeChannel {
+			channel := edge.(*Channel)
+			log.Debug("Adding channel!")
+			print(fmt.Sprintf("ch%v[label=\"\", shape=circle, width=0.2]", idx))
+			print(fmt.Sprintf("%v ->  ch%v [arrowhead=none];", channel.first.title, idx))
+			print(fmt.Sprintf("ch%v ->  %v [arrowhead=none];", idx, channel.second.title))
 		}
 
-		print(edgestr)
 	}
 	print("} // end digraph\n")
 }
