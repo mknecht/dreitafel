@@ -1,28 +1,28 @@
 # Generated with Dreitafel
 # https://github.com/mknecht/dreitafel
-#
-# Source:
-#   (Oil) -> [Engine] -> (Heat) (Fuel) -> [Engine] -> (Rotation)
 
-digraph "Propulsion system of a car" {
-        
-        label="\G";
-        # horizontal layout
-        rankdir=LR;
-        
-        # Actors
-        Engine[shape=box];
-        Engine[shape=box];
-        
-        # Storages
-        Oil[shape=box,style=rounded];
-        Heat[shape=box,style=rounded];
-        Fuel[shape=box,style=rounded];
-        Rotation[shape=box,style=rounded];
-        
-        # Accesses
-        Oil -> Engine;
-        Engine -> Heat;
-        Fuel -> Engine;
-        Engine -> Rotation;
+digraph "My first diagram" {
+
+# horizontal layout
+rankdir=LR;
+splines=ortho;
+nodesep=0.8;
+arrowhead=vee;
+
+# Actors
+Engine[shape=box];
+Engine[shape=box];
+
+# Storages
+Fuel[shape=box,style=rounded];
+Rotation[shape=box,style=rounded];
+Oil[shape=box,style=rounded];
+Heat[shape=box,style=rounded];
+
+# Accesses
+Fuel -> Engine [arrowhead=vee];
+Engine -> Rotation  [arrowhead=vee];
+Oil -> Engine [arrowhead=vee];
+Engine -> Heat  [arrowhead=vee];
 } // end digraph
+

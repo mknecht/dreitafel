@@ -1,0 +1,33 @@
+# Generated with Dreitafel
+# https://github.com/mknecht/dreitafel
+
+digraph "My first diagram" {
+
+# horizontal layout
+rankdir=LR;
+splines=ortho;
+nodesep=0.8;
+arrowhead=vee;
+
+# Actors
+Browser[shape=box];
+nginx[shape=box];
+Django[shape=box];
+PostgreSQL[shape=box];
+
+# Storages
+Data[shape=box,style=rounded];
+
+# Accesses
+ch0[label="", shape=circle, width=0.2]
+Browser ->  ch0 [arrowhead=none];
+ch0 ->  nginx [arrowhead=none];
+ch1[label="", shape=circle, width=0.2]
+nginx ->  ch1 [arrowhead=none];
+ch1 ->  Django [arrowhead=none];
+ch2[label="", shape=circle, width=0.2]
+Django ->  ch2 [arrowhead=none];
+ch2 ->  PostgreSQL [arrowhead=none];
+PostgreSQL -> Data  [arrowhead=vee];
+} // end digraph
+

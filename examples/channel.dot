@@ -1,0 +1,23 @@
+# Generated with Dreitafel
+# https://github.com/mknecht/dreitafel
+
+digraph "My first diagram" {
+
+# horizontal layout
+rankdir=LR;
+splines=ortho;
+nodesep=0.8;
+arrowhead=vee;
+
+# Actors
+App[shape=box];
+Database[shape=box];
+
+# Storages
+
+# Accesses
+ch0[label="", shape=circle, width=0.2]
+App ->  ch0 [arrowhead=none];
+ch0 ->  Database [arrowhead=none];
+} // end digraph
+

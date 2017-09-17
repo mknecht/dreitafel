@@ -1,0 +1,27 @@
+# Generated with Dreitafel
+# https://github.com/mknecht/dreitafel
+
+digraph "My first diagram" {
+
+# horizontal layout
+rankdir=LR;
+splines=ortho;
+nodesep=0.8;
+arrowhead=vee;
+
+# Actors
+Dreitafel[shape=box];
+Graphviz[shape=box];
+
+# Storages
+FMC[shape=box,style=rounded];
+dot[shape=box,style=rounded];
+PNG[shape=box,style=rounded];
+
+# Accesses
+FMC -> Dreitafel [arrowhead=vee];
+Dreitafel -> dot  [arrowhead=vee];
+dot -> Graphviz [arrowhead=vee];
+Graphviz -> PNG  [arrowhead=vee];
+} // end digraph
+
