@@ -10,19 +10,19 @@ nodesep=0.8;
 arrowhead=vee;
 
 # Actors
-Engine[shape=box];
-Engine[shape=box];
+"Engine"[shape=box];
+"Engine"[shape=box];
 
 # Storages
-Fuel[shape=box,style=rounded];
-Rotation[shape=box,style=rounded];
-Oil[shape=box,style=rounded];
-Heat[shape=box,style=rounded];
+"Fuel"[shape=box,style=rounded];
+"Rotation"[shape=box,style=rounded];
+"Oil"[shape=box,style=rounded];
+"Heat"[shape=box,style=rounded];
 
-# Accesses
-Fuel -> Engine [arrowhead=vee];
-Engine -> Rotation  [arrowhead=vee];
-Oil -> Engine [arrowhead=vee];
-Engine -> Heat  [arrowhead=vee];
+# Accesses & Channels
+"Fuel" -> "Engine" [arrowhead=vee];
+"Engine" -> "Rotation"  [arrowhead=vee];
+"Oil" -> "Engine" [arrowhead=vee];
+"Engine" -> "Heat"  [arrowhead=vee];
 } // end digraph
 

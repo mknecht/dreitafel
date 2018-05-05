@@ -1,8 +1,6 @@
 # Dreitafel
 **Heads up, this is still very much in development (2017-Sep-09)**, the compiler works for veeeeery simple diagrams, [try.dreitafel.org](http://try.dreitafel.org/) and [view.dreitafel.org](http://view.dreitafel.org/) are there, but that's it. See you in a month for something useful. :)
 
-**News: Added simple bidirectional channels to FMC Block Diagrams!**
-
 Dreitafel helps you document and discuss the architecture and design of your software.
 
 At its core, Dreitafel is a modeling language plus some tools, such as a compiler.
@@ -11,7 +9,7 @@ At its core, Dreitafel is a modeling language plus some tools, such as a compile
 For example, this is how you could model `grep`:
 
 ```
-(textLines) -> [grep] -> (matches)
+(text lines) -> [grep] -> (matches)
 ```
 
 Dreitafel turns this text-based diagram into an image:
@@ -246,7 +244,7 @@ To remember where I left off:
 * 1.0
   * [ ] CLI <3 — i/o with files/stdin/stdout, proper config
   * [ ] Styling of the diagram, making it look more hand-drawn
-  * [ ] Beautiful titles, with spaces, all kinds of characters.
+  * [x] Beautiful titles, with spaces, all kinds of characters.
   * [ ] Syntax: Comments
   * [ ] Create badge. :)
   * [x] Build & deploy gist/jsfiddle/play equivalent.

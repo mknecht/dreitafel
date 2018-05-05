@@ -10,14 +10,14 @@ nodesep=0.8;
 arrowhead=vee;
 
 # Actors
-Oven[shape=box];
+"Oven"[shape=box];
 
 # Storages
-Wood[shape=box,style=rounded];
-Heat[shape=box,style=rounded];
+"Wood"[shape=box,style=rounded];
+"Heat"[shape=box,style=rounded];
 
-# Accesses
-Wood -> Oven [arrowhead=vee];
-Oven -> Heat  [arrowhead=vee];
+# Accesses & Channels
+"Wood" -> "Oven" [arrowhead=vee];
+"Oven" -> "Heat"  [arrowhead=vee];
 } // end digraph
 

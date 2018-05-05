@@ -10,14 +10,14 @@ nodesep=0.8;
 arrowhead=vee;
 
 # Actors
-grep[shape=box];
+"grep"[shape=box];
 
 # Storages
-textLines[shape=box,style=rounded];
-matches[shape=box,style=rounded];
+"text lines"[shape=box,style=rounded];
+"matches"[shape=box,style=rounded];
 
-# Accesses
-textLines -> grep [arrowhead=vee];
-grep -> matches  [arrowhead=vee];
+# Accesses & Channels
+"text lines" -> "grep" [arrowhead=vee];
+"grep" -> "matches"  [arrowhead=vee];
 } // end digraph
 
