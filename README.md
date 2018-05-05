@@ -128,7 +128,7 @@ The latter is then used to generate the actual image.
 
 The following diagram illustrates this (generated with Dreitafel and graphviz of course):
 
-![Integration of dreitafel with graphviz](http://view.dreitafel.org/gh/?format=svg&repository=mknecht%2Fdreitafel&path=docs%2Freadme%2F.fmc)
+![Integration of Dreitafel with graphviz](http://view.dreitafel.org/gh/?format=svg&repository=mknecht%2Fdreitafel&path=docs%2Freadme%2Fdreitafel-graphviz-flow.fmc)
 
 ## The (Planned) Architecture of Dreitafel
 
