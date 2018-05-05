@@ -92,7 +92,7 @@ To make things look beautiful:
 The technology accessible to most people is text.
 Dreitafel defines a text-based version of FMC Block Diagrams.
 
-Additionally, Dreitafel comprise of the following tools…
+Additionally, Dreitafel will comprise of the following tools…
 
 - [x] a **compiler** from a text DSL to graphviz dot.
 - [x] a **web-version of the compiler** so you can send text and get back an image, see http://view.dreitafel.org
