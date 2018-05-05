@@ -133,6 +133,8 @@ The following diagram illustrates this (generated with Dreitafel and graphviz of
 
 Dreitafel will consist of three main components:
 
+![Main components of Dreitafel](http://view.dreitafel.org/gh/?format=svg&repository=mknecht%2Fdreitafel&path=docs%2Freadme%2Fmain-components.fmc)
+
 ```
 [ Playground webapp ]      -o- [          ]
                                [ Compiler ]
@@ -154,11 +156,7 @@ The compiler reads Dreitafel source code
 and spits out dot-generated graphs of the same FMC Block diagrams.
 It consists of the following components:
 
-```fmcblock
-[ Reader ] -o- [ Lexer ] -o- [ Parser ] -o- [ DotGenerator ]
-
-[ ErrorHandler ]
-```
+![Compiler Overview](http://view.dreitafel.org/gh/?format=svg&repository=mknecht%2Fdreitafel&path=docs%2Freadme%2Fcompiler-overview.fmc)
 
 Each of these components is running as its own goroutine;
 communication between them happens with channels.
@@ -168,10 +166,7 @@ Its job is to recognize individual diagram elements, such as Actors and Storages
 
 Any syntax element it recognizes, i.e. `AST Element` from Abstract Syntax Tree, is put into a queue (a Go channel) to be read by the Parser.
 
-```dreitafel:fmcblock
-( Source ) -> [ Lexer ] -> ( AstElement ) -> [ Parser ]
-                        -> ( Unrecognizable text ) -> [ ErrorHandler ]
-```
+![Dataflow Lexer to Parser](http://view.dreitafel.org/gh/?format=svg&repository=mknecht%2Fdreitafel&path=docs%2Freadme%2Fcompiler-dataflow-lexer.fmc)
 
 Anything the Lexer cannot recognize results in an error.
 The rest of the line will be skipped and forwarded to the ErrorHandler.
@@ -179,10 +174,7 @@ The rest of the line will be skipped and forwarded to the ErrorHandler.
 Then, the **Parser** reads the diagram elements recognized by the Lexer.
 It's job is to assemble a valid diagram from the individual parts.
 
-```dreitafel:fmcblock
-( AST element ) -> [ Parser ] -> ( Diagram )              -> [ Dot Generator ]
-                              -> ( Invalid AST Elements ) -> [ ErrorHandler ]
-```
+![Dataflow Parser to Dot Generator](http://view.dreitafel.org/gh/?format=svg&repository=mknecht%2Fdreitafel&path=docs%2Freadme%2Fcompiler-dataflow-parser.fmc)
 
 The diagram is then forwarded to the Dot Generator.
 The AST Elemeents that did not make sense,
@@ -274,6 +266,7 @@ To remember where I left off:
 
 ## Milestones
 
+* 2018-May-06 Added rendering of GitHub-hosted FMC source code!
 * 2017-Sep-09 Added channels!
 
 ## Commands to remember:
