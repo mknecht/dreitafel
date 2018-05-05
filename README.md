@@ -14,12 +14,13 @@ For example, this is how you could model `grep`:
 
 Dreitafel turns this text-based diagram into an image:
 
-![grep searches text lines for matches](examples/grep.png)
+![grep searches text lines for matches](http://view.dreitafel.org/gh/?format=svg&repository=mknecht%2Fdreitafel&path=docs%2Freadme%2Fgrep.fmc)
 
+(See the [source code](docs/readme/grep.fmc), it's [live rendered](http://try.dreitafel.org/).)
 
 ## Try it
 
-Head over to [try.dreitafel.org](http://try.dreitafel.org/)
+Head over to [try.dreitafel.org](http://try.dreitafel.org/) to try it yourself!
 
 
 ### Trying locally
@@ -87,7 +88,7 @@ Or a cloud deployment.
 Wait, what do we need Dreitafel for again?
 To make things look beautiful:
 
-![You put wood and get heat: The basics of an oven :)](examples/oven.png)
+![You put wood inside and get heat out: The basics of an oven :)](http://view.dreitafel.org/gh/?format=svg&repository=mknecht%2Fdreitafel&path=docs%2Freadme%2Foven.fmc)
 
 The technology accessible to most people is text.
 Dreitafel defines a text-based version of FMC Block Diagrams.
@@ -127,21 +128,13 @@ The latter is then used to generate the actual image.
 
 The following diagram illustrates this (generated with Dreitafel and graphviz of course):
 
-![Integration of dreitafel with graphviz](examples/dreitafel.png)
+![Integration of dreitafel with graphviz](http://view.dreitafel.org/gh/?format=svg&repository=mknecht%2Fdreitafel&path=docs%2Freadme%2F.fmc)
 
 ## The (Planned) Architecture of Dreitafel
 
 Dreitafel will consist of three main components:
 
 ![Main components of Dreitafel](http://view.dreitafel.org/gh/?format=svg&repository=mknecht%2Fdreitafel&path=docs%2Freadme%2Fmain-components.fmc)
-
-```
-[ Playground webapp ]      -o- [          ]
-                               [ Compiler ]
-[                        ] -o- [          ]
-[ Markdown-viewer webapp ]
-[                        ] -o- [ GitHub ]
-```
 
 * Compiler: Reads the text source for a diagram and produces the same block diagram nicely rendered as PNG or SVG.
 * Playground webapp: Gist/JS-Fiddle clone to play with and link diagrams
