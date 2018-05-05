@@ -116,6 +116,11 @@ Eventually, it would be great to get Jekyll and Sphinx support. The viewers woul
 * [esimov/diagram](https://github.com/esimov/diagram) is a “CLI app to convert ascii arts into hand drawn diagrams”. Love the idea, it's one of the later features
   I'd like to see for FMC block diagrams, because they're *designed*
   to be hand-drawn.
+* [Graphviz](http://www.graphviz.org/) is open source graph visualization software.
+  It's used in Dreitafel to render FMC Block Diagrams.
+* [Tinkerpop](https://tinkerpop.apache.org/) is a graph computing framework for both graph databases (OLTP) and graph analytic systems (OLAP).
+
+See also the [list of Graphviz-related projects](http://www.graphviz.org/content/resources).
 
 ## The Current Architecture of Dreitafel
 
@@ -151,7 +156,7 @@ The compiler reads Dreitafel source code
 and spits out dot-generated graphs of the same FMC Block diagrams.
 It consists of the following components:
 
-```dreitafel:fmcblock
+```fmcblock
 [ Reader ] -o- [ Lexer ] -o- [ Parser ] -o- [ DotGenerator ]
 
 [ ErrorHandler ]
@@ -197,13 +202,18 @@ and produces a dot graph representing the FMC diagram.
 
 ## The road ahead
 
-## Next technical steps
+### Next technical steps
 
 To remember where I left off:
 
 * debug view with fmc source, dot source, output and compile errors at `/debug`
 * errors for try.dreitafel.org
 * Make sure “block” diagram is part of the url, for example view.dreitafel.org/fmc-blocks/, so that other FMC parts can be added
+* subgraph for each line as simple layout hints
+
+### How to build the markdown viewer
+
+* blackfriday for parsing
 
 ### Roadmap
 
@@ -232,6 +242,7 @@ To remember where I left off:
   * [x] Docker image with binaries
   * [ ] Documentation for Docker image
   * [ ] Logo! (Of course)
+  * [ ] Request addition to the [Graphviz list](http://www.graphviz.org/content/resources)
 * 1.0
   * [ ] CLI <3 — i/o with files/stdin/stdout, proper config
   * [ ] Styling of the diagram, making it look more hand-drawn

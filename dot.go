@@ -49,33 +49,35 @@ func (diagram *FmcBlockDiagram) GenerateDot(print func(txt string)) {
 	print(`# Actors`)
 	for _, node := range diagram.nodes {
 		if reflect.TypeOf(node) == reflect.TypeOf(&Actor{}) {
-			print(fmt.Sprintf("%v[shape=box];", node.(*Actor).title))
+			print(fmt.Sprintf("\"%v\"[shape=box];", node.(*Actor).title))
 		}
 	}
 	print("")
 	print(`# Storages`)
 	for _, node := range diagram.nodes {
 		if reflect.TypeOf(node) == reflect.TypeOf(&Storage{}) {
-			print(fmt.Sprintf("%v[shape=box,style=rounded];", node.(*Storage).title))
+			print(fmt.Sprintf("\"%v\"[shape=box,style=rounded];", node.(*Storage).title))
 		}
 	}
 	print("")
-	print(`# Accesses`)
+	print(`# Accesses & Channels`)
 	for idx, edge := range diagram.edges {
 		if edge.GetEdgeType() == EdgeTypeRead {
 			log.Debug("Adding read access!")
 			read := edge.(*BipartiteEdge)
-			print(fmt.Sprintf("%v -> %v [arrowhead=vee];", read.storage.title, read.actor.title))
+			print(fmt.Sprintf("\"%v\" -> \"%v\" [arrowhead=vee];", read.storage.title, read.actor.title))
 		} else if edge.GetEdgeType() == EdgeTypeWrite {
 			write := edge.(*BipartiteEdge)
 			log.Debug("Adding write access!")
-			print(fmt.Sprintf("%v -> %v  [arrowhead=vee];", write.actor.title, write.storage.title))
+			print(fmt.Sprintf("\"%v\" -> \"%v\"  [arrowhead=vee];", write.actor.title, write.storage.title))
 		} else if edge.GetEdgeType() == EdgeTypeChannel {
 			channel := edge.(*Channel)
 			log.Debug("Adding channel!")
-			print(fmt.Sprintf("ch%v[label=\"\", shape=circle, width=0.2]", idx))
-			print(fmt.Sprintf("%v ->  ch%v [arrowhead=none];", channel.first.title, idx))
-			print(fmt.Sprintf("ch%v ->  %v [arrowhead=none];", idx, channel.second.title))
+			print(fmt.Sprintf("\"ch%v\"[label=\"\", shape=circle, width=0.2]", idx))
+			print(fmt.Sprintf("\"%v\" ->  \"ch%v\" [arrowhead=none];", channel.first.title, idx))
+			print(fmt.Sprintf("\"ch%v\" ->  \"%v\" [arrowhead=none];", idx, channel.second.title))
+		} else {
+			log.Warning(fmt.Sprintf("Unknown edge type not supported by this renderer: %v", edge.GetEdgeType()))
 		}
 
 	}

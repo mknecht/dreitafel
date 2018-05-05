@@ -14,7 +14,8 @@ import (
 // Eventually consider existing definitions for
 // acceptable names, such as XML element names,
 // or host names
-var titleExp = `[\p{L}\d_]+`
+// https://github.com/google/re2/wiki/Syntax
+var titleExp = `[\pL\d_-]+(?:\s*[\pL\d_-]+)*`
 
 type Lexer struct {
 	line   *string
@@ -159,6 +160,10 @@ func buildDiagram(tokens <-chan Token, diagrams chan<- *FmcBlockDiagram, errorsC
 
 					// other tokens before are fine:
 					// a “multiple expressions” line
+				case TokenTypeBidirectionalChannel:
+					errorsChan <- errors.New("Syntax error: A channel must connect Actor to Actor, not Actor to Storage.")
+					resetPrev()
+					continue
 				}
 			}
 
