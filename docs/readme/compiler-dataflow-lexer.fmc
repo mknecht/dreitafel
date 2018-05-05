@@ -1,0 +1,2 @@
+( Source ) -> [ Lexer ] -> ( AST Element ) -> [ Parser ]
+              [ Lexer ] -> ( Unrecognizable text ) -> [ Error Handler ]

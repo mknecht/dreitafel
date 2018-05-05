@@ -1,0 +1,3 @@
+[ Reader ] -o- [ Lexer ] -o- [ Parser ] -o- [ Dot Generator ]
+
+[ Error Handler ]

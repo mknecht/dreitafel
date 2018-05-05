@@ -108,18 +108,28 @@ func compileFmcBlockDiagramFromGithubUrl(w http.ResponseWriter, r *http.Request)
 	}
 	path := r.Form["path"][len(r.Form["path"])-1]
 
-	response, err := http.Get(fmt.Sprintf("https://raw.githubusercontent.com/%v/master/%v", repository, path))
-	if err != nil {
-		return
-	}
-	defer response.Body.Close()
-
 	fmcSrcLines := make(chan *string) // lines are independent; statements don't span lines yet
 	dotSrcLines := make(chan *string, 500)
 	errors := make(chan error, 500) // errors are independent
 
+	githubUrl := fmt.Sprintf("https://raw.githubusercontent.com/%v/master/%v", repository, path)
+
+	fmt.Printf("Fetching FMC source from: %v\n", githubUrl)
+	response, err := http.Get(githubUrl)
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%v\n", err)
+		return
+	}
+	defer response.Body.Close()
+
+	if response.StatusCode > 200 {
+		http.Error(w, fmt.Sprintf("Could not read %v - status code: %v", githubUrl, response.StatusCode), http.StatusNotFound)
+		return
+	}
+
 	var wg sync.WaitGroup
 
+	fmt.Printf("Starting to process FMC source from: %v\n", githubUrl)
 	go dreitafel.CompileFmcBlockDiagramToDot(fmcSrcLines, dotSrcLines, errors)
 
 	w.Header().Add("Content-Type", contentType)
@@ -134,11 +144,13 @@ func compileFmcBlockDiagramFromGithubUrl(w http.ResponseWriter, r *http.Request)
 		line := scanner.Text()
 		fmcSrcLines <- &line
 	}
+	close(fmcSrcLines)
 	if scanner.Err() != nil {
 		errors <- scanner.Err()
 	}
-	close(fmcSrcLines)
+
 	wg.Wait()
+	fmt.Printf("Finished processing FMC source from: %v\n", githubUrl)
 }
 
 func writeDotSrcLines(w io.Writer, dotSrcLines chan *string, errors chan error, wg *sync.WaitGroup) {

@@ -1,0 +1,2 @@
+( AST Element ) -> [ Parser ] -> ( Diagram )              -> [ Dot Generator ]
+                   [ Parser ] -> ( Invalid AST Elements ) -> [ Error Handler ]
