@@ -109,44 +109,78 @@
         <script>
 
         var viewerUrl = "http://view.dreitafel.org"
+        // var viewerUrl = "http://localhost:8080"
 
-        function renderDiagram() {
+        function renderDiagramFromText() {
           var imageUrl = viewerUrl + "/fmc/?format=svg&diagram=" + encodeURIComponent(document.getElementById('textarea-src').value)
-          document.getElementById('img-output').src = imageUrl
-          document.getElementById('span-link').textContent = imageUrl
+            document.getElementById('img-output').src = imageUrl
+          document.getElementById('link').textContent = imageUrl
           return false
         }
 
-        function handleKeypress(e) {
+        function handleKeypressForText(e) {
           var k = e.keyCode || e.which
           if (k == 10 && e.ctrlKey) {
-            renderDiagram()
+            renderDiagramFromText()
           }
           return false
         }
 
-        function exEngine() {
+        function exTextEngine() {
           document.getElementById('textarea-src').value = (
             '(Gasoline) -> [Engine] -> (Turning Wheels)\n\n'
-            + '(Oil) -> [Engine]'
+          + '(Oil) -> [Engine]'
           )
-          renderDiagram()
+            renderDiagramFromText()
         }
-        function exDreitafel() {
+        function exTextDreitafel() {
           document.getElementById('textarea-src').value = (
             '(Fmc Block Source) -> [Dreitafel] -> (SVG Diagram)\n\n'
           )
-            renderDiagram()
+            renderDiagramFromText()
         }
-        function exWebStack() {
+        function exTextWebStack() {
           document.getElementById('textarea-src').value = (
             '[Browser] --o-- [nginx] -> (logs)\n\n'
           )
-            renderDiagram()
+            renderDiagramFromText()
+        }
+
+        function renderDiagramFromGithub() {
+          var imageUrl = (
+            viewerUrl
+          + "/gh/?format=svg"
+          + "&repository=" + encodeURIComponent(document.getElementById('repository').value)
+              + "&path=" + encodeURIComponent(document.getElementById('path').value)
+          )
+            document.getElementById('img-output').src = imageUrl
+          document.getElementById('link').textContent = imageUrl
+          return false
+        }
+
+        function handleKeypressForGithub(e) {
+          var k = e.keyCode || e.which
+          console.log(k)
+            if (k == 10 || k == 13) {
+            renderDiagramFromGithub()
+          }
+          return false
+        }
+
+        function exGithubCar() {
+          document.getElementById('repository').value = 'mknecht/dreitafel'
+          document.getElementById('path').value = 'examples/car.fmc'
+          renderDiagramFromGithub()
+        }
+
+        function exGithubOven() {
+          document.getElementById('repository').value = 'mknecht/dreitafel'
+          document.getElementById('path').value = 'examples/oven.fmc'
+          renderDiagramFromGithub()
         }
         </script>
     </head>
-    <body onload="exDreitafel()">
+    <body onload="exTextDreitafel()">
         <header role="banner">
             <nav role="navigation">
                 <span><a href="http://www.dreitafel.org">Project home</a></span> |
@@ -157,33 +191,51 @@
         </header>
 
         <main>
-            <div style="padding:1em 0em">
-                <a href="" onclick="exDreitafel(); return false">Example: Dreitafel</a> |
-                <a href="" onclick="exEngine(); return false">Example: Engine</a> |
-                <a href="" onclick="exWebStack(); return false">Example: Web-stack</a>
-            </div>
-            <textarea id="textarea-src" style="float:left;width:40%; height:10em;" onkeypress="handleKeypress(event)"></textarea>
 
-            <div style="float:left; margin-left:1em;">
-                <img id="img-output"/>
+            <div id="left" style="float:left; width:40%; height:100%;">
+                <div style="padding:1em 0em">
+                    <a href="" onclick="exTextDreitafel(); return false">Example: Dreitafel</a> |
+                    <a href="" onclick="exTextEngine(); return false">Example: Engine</a> |
+                    <a href="" onclick="exTextWebStack(); return false">Example: Web-stack</a>
+                </div>
+
+                <textarea id="textarea-src" style="height:10em; margin: 0 1em; width:90%" onkeypress="handleKeypressForText(event)"></textarea>
+
+                <div style="padding:1em 0em;">
+                    <button onclick="renderDiagramFromText()">Render</button>
+                    (or hit Ctrl-Return)
+                </div>
+
+                <h3>Or directly from GitHub</h3>
+                <div style="padding:1em 0em">
+                    <a href="" onclick="exGithubOven(); return false">Example: Oven</a> |
+                    <a href="" onclick="exGithubCar(); return false">Example: Car</a>
+                </div>
+                <div>
+                    <label for="repository"> Repository: </label> <input id="repository" type="text" value="mknecht/dreitafel" onkeypress="handleKeypressForGithub(event)">
+                    <label for="path"> Path: </label> <input id="path" type="text" value="examples/car.fmc" onkeypress="handleKeypressForGithub(event)">
+                    <button onclick="renderDiagramFromGithub()">Fetch &amp; Render</button>
+                </div>
+
+                <h2>Help tips</h2>
+                <ul>
+                    <li>Errors are not yet displayed</li>
+                    <li>Two elements with the same name are assumed to be the same.</li>
+                </ul>
             </div>
-            <div style="clear:both; padding:1em 0em;">
-                <button onclick="renderDiagram()">Render</button>
-                (or hit Ctrl-Return)
-            </div>
-            <div style="padding-top:1em;">
-                <p>Link to copy:</p>
-                <p><span id="span-link" style="background-color: lightgray; padding:0.5em;"></span></p>
+
+            <div id="right" style="float:left; width: 55%">
+
+                <div style="margin-left:1em; margin-top:2em;">
+                    <img id="img-output"/>
+
+                    <div id="linkarea">
+                        <p>Link to copy:</p>
+                        <textarea id="link" style="width:100%"></textarea>
+                    </div>
+                </div>
             </div>
         </main>
-
-        <aside>
-            <h2>Help tips</h2>
-            <ul>
-                <li>Errors are not yet displayed</li>
-                <li>Two elements with the same name are assumed to be the same.</li>
-            </ul>
-        </aside>
 
     </body>
 </html>

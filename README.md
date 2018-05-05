@@ -96,7 +96,7 @@ Additionally, Dreitafel will comprise of the following tools…
 
 - [x] a **compiler** from a text DSL to graphviz dot.
 - [x] a **web-version of the compiler** so you can send text and get back an image, see http://view.dreitafel.org
-- [ ] a **viewer of GitHub hosted Dreitafel source code**: You put your diagram source in a textfile on GitHub,
+- [x] a **viewer of GitHub hosted Dreitafel source code**: You put your diagram source in a textfile on GitHub,
       and in your README link an image to the viewer. Whenever you change the textfile, the image will automatically
       by updated.
 - [x] a **playground** for diagrams at http://try.dreitafel.org
@@ -223,7 +223,7 @@ To remember where I left off:
     * [X] Actor writes to Storage.
   * [X] Compiler for Dreitafel text-syntax to graphviz' dot.
   * [x] web-version of the compiler
-  * [ ] viewer for GH-hosted Dreitafel source files
+  * [x] viewer for GH-hosted Dreitafel source files
   * [x] Deploy view.dreitafel.org/fmc-blocks/
   * [x] Deploy try.dreitafel.org
 * Publish

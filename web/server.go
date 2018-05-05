@@ -1,6 +1,7 @@
 package web
 
 import (
+	"bufio"
 	"dreitafel"
 	"io"
 	"io/ioutil"
@@ -42,11 +43,10 @@ func index(w http.ResponseWriter, r *http.Request) {
 func compileFmcBlockDiagramFromQueryString(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 
-	if len(r.Form["format"]) == 0 {
-		http.Error(w, fmt.Sprintf("Need 'format' query param. Supported formats are: %v", validFormats), http.StatusBadRequest)
-		return
+	format := "png"
+	if len(r.Form["format"]) > 0 {
+		format = r.Form["format"][len(r.Form["format"])-1]
 	}
-	format := r.Form["format"][len(r.Form["format"])-1]
 
 	contentType, ok := responseFormats[format]
 	if !ok {
@@ -79,6 +79,65 @@ func compileFmcBlockDiagramFromQueryString(w http.ResponseWriter, r *http.Reques
 	fmcSrcLines <- &diagram
 	close(fmcSrcLines)
 
+	wg.Wait()
+}
+
+func compileFmcBlockDiagramFromGithubUrl(w http.ResponseWriter, r *http.Request) {
+	r.ParseForm()
+
+	format := "png"
+	if len(r.Form["format"]) > 0 {
+		format = r.Form["format"][len(r.Form["format"])-1]
+	}
+
+	contentType, ok := responseFormats[format]
+	if !ok {
+		http.Error(w, fmt.Sprintf("Supported values for 'format' param are: %v", validFormats), http.StatusBadRequest)
+		return
+	}
+
+	if len(r.Form["repository"]) == 0 {
+		http.Error(w, "Need 'repository' query param with full name of the Github repository, for example 'mknecht/dreitafel'", http.StatusBadRequest)
+		return
+	}
+	repository := r.Form["repository"][len(r.Form["repository"])-1]
+
+	if len(r.Form["path"]) == 0 {
+		http.Error(w, "Need 'path' query param with path to file in the Github repository, for example 'examples/car.fmc'", http.StatusBadRequest)
+		return
+	}
+	path := r.Form["path"][len(r.Form["path"])-1]
+
+	response, err := http.Get(fmt.Sprintf("https://raw.githubusercontent.com/%v/master/%v", repository, path))
+	if err != nil {
+		return
+	}
+	defer response.Body.Close()
+
+	fmcSrcLines := make(chan *string) // lines are independent; statements don't span lines yet
+	dotSrcLines := make(chan *string, 500)
+	errors := make(chan error, 500) // errors are independent
+
+	var wg sync.WaitGroup
+
+	go dreitafel.CompileFmcBlockDiagramToDot(fmcSrcLines, dotSrcLines, errors)
+
+	w.Header().Add("Content-Type", contentType)
+	if format == "dot" {
+		writeDotSrcLines(w, dotSrcLines, errors, &wg)
+	} else {
+		writeDotGeneratedImage(format, w, dotSrcLines, errors, &wg)
+	}
+
+	scanner := bufio.NewScanner(response.Body)
+	for scanner.Scan() {
+		line := scanner.Text()
+		fmcSrcLines <- &line
+	}
+	if scanner.Err() != nil {
+		errors <- scanner.Err()
+	}
+	close(fmcSrcLines)
 	wg.Wait()
 }
 
@@ -183,6 +242,7 @@ func ListenAndServe() {
 	}
 
 	http.HandleFunc("/fmc/", compileFmcBlockDiagramFromQueryString)
+	http.HandleFunc("/gh/", compileFmcBlockDiagramFromGithubUrl)
 	http.HandleFunc("/", index)
 	http.ListenAndServe(":8080", nil)
 }
